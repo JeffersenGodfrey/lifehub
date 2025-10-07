@@ -1,0 +1,245 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.App-header {
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.App-header p {
+  margin: 0.5rem 0 0 0;
+  opacity: 0.9;
+}
+
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.tab-nav button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.tab-nav button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.tab-nav button.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.tasks-section, .wellness-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.task-form, .wellness-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.task-form input, .task-form select, .task-form button,
+.wellness-form input, .wellness-form select, .wellness-form button {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.task-form input, .task-form select,
+.wellness-form input, .wellness-form select {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  min-width: 150px;
+}
+
+.task-form button, .wellness-form button {
+  background: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.task-form button:hover, .wellness-form button:hover {
+  background: #45a049;
+}
+
+.tasks-list, .wellness-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.task-item.completed {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.task-content {
+  flex: 1;
+  text-align: left;
+}
+
+.task-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.task-content p {
+  margin: 0 0 0.5rem 0;
+  opacity: 0.8;
+}
+
+.priority {
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.priority.low {
+  background: #4CAF50;
+  color: white;
+}
+
+.priority.medium {
+  background: #FF9800;
+  color: white;
+}
+
+.priority.high {
+  background: #F44336;
+  color: white;
+}
+
+.category {
+  background: #2196F3;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.task-actions button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.task-actions button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.wellness-item {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wellness-date {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.wellness-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.wellness-stats span {
+  background: rgba(102, 126, 234, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .task-form, .wellness-form {
+    flex-direction: column;
+  }
+  
+  .task-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .wellness-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .wellness-stats {
+    flex-wrap: wrap;
+  }
+}

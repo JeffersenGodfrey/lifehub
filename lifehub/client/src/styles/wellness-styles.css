@@ -1,0 +1,337 @@
+.wellness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.wellness-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.wellness-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.wellness-card h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.counter span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 600;
+  color: #4B9DEA;
+  min-width: 120px;
+}
+
+.btn-secondary {
+  background: rgba(75, 157, 234, 0.2);
+  color: #4B9DEA;
+  border: 1px solid rgba(75, 157, 234, 0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(75, 157, 234, 0.3);
+  transform: translateY(-1px);
+}
+
+.water-visual {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.water-drop {
+  font-size: 20px;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.water-drop.filled {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.steps-progress, .sleep-quality {
+  margin-top: 12px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4B9DEA, #6BE585);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.goal-text, .sleep-text, .mood-text {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.steps-input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4B9DEA;
+  text-align: center;
+  width: 80px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.steps-input:focus {
+  border-color: #4B9DEA;
+  box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
+}
+
+.sleep-input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4B9DEA;
+  text-align: center;
+  width: 80px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.sleep-input:focus {
+  border-color: #4B9DEA;
+  box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
+}
+
+.sleep-bars {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 4px;
+  height: 40px;
+  margin-bottom: 8px;
+}
+
+.sleep-bar {
+  width: 8px;
+  background: linear-gradient(to top, #4B9DEA, #6BE585);
+  border-radius: 4px;
+  transition: height 0.3s ease;
+}
+
+.mood-selector {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mood-selector button {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mood-selector button:hover {
+  transform: scale(1.1);
+}
+
+.mood-selector button.active {
+  border-color: #4B9DEA;
+  background: rgba(75, 157, 234, 0.1);
+}
+
+.habits {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.habits h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.habit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.habit-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.habit-item.completed {
+  background: rgba(107, 229, 133, 0.2);
+  border: 1px solid rgba(107, 229, 133, 0.3);
+}
+
+.habit-item span {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.habit-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.habit-toggle:hover {
+  background: rgba(75, 157, 234, 0.1);
+  transform: scale(1.1);
+}
+
+/* Steps Animation Styles */
+.animated-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.steps-count {
+  font-family: 'Fira Code', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #4B9DEA;
+  transition: all 0.3s ease;
+}
+
+.steps-animation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-icon {
+  font-size: 16px;
+  animation: stepBounce 1s ease-in-out infinite;
+}
+
+@keyframes stepBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.walking-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.walking-dots span {
+  width: 4px;
+  height: 4px;
+  background: #4B9DEA;
+  border-radius: 50%;
+  animation: walkingDots 1.2s ease-in-out infinite;
+}
+
+.walking-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.walking-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.walking-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes walkingDots {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@media (max-width: 768px) {
+  .wellness-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .counter {
+    gap: 12px;
+  }
+  
+  .counter span {
+    font-size: 18px;
+    min-width: 100px;
+  }
+  
+  .steps-count {
+    font-size: 20px;
+  }
+}

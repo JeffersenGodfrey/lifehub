@@ -1,0 +1,210 @@
+.habit-manager {
+  width: 100%;
+}
+
+.add-habit-section {
+  margin-bottom: 16px;
+}
+
+.add-habit-btn {
+  background: linear-gradient(135deg, #4B9DEA, #6BE585);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-habit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 157, 234, 0.3);
+}
+
+.add-habit-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.habit-form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.habit-icon-select {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  width: 50px;
+}
+
+.habit-name-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.habit-name-input:focus {
+  border-color: #4B9DEA;
+  box-shadow: 0 0 0 2px rgba(75, 157, 234, 0.1);
+}
+
+.habit-form-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.save-habit-btn {
+  background: #6BE585;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 11px;
+}
+
+.save-habit-btn:hover {
+  background: #5dd470;
+}
+
+.cancel-habit-btn {
+  background: #FF8A65;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 11px;
+}
+
+.cancel-habit-btn:hover {
+  background: #ff7043;
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.habit-item {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.habit-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.habit-item.completed {
+  background: rgba(107, 229, 133, 0.2);
+  border: 1px solid rgba(107, 229, 133, 0.3);
+}
+
+.habit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habit-name {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.habit-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.habit-toggle, .habit-delete {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.habit-toggle:hover {
+  background: rgba(107, 229, 133, 0.1);
+  transform: scale(1.1);
+}
+
+.habit-delete {
+  opacity: 0.6;
+}
+
+.habit-delete:hover {
+  background: rgba(255, 138, 101, 0.1);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.empty-habits {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+}
+
+.empty-habits-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.empty-habits p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  margin: 0;
+}
+
+.sleep-input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4B9DEA;
+  text-align: center;
+  width: 80px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.sleep-input:focus {
+  border-color: #4B9DEA;
+  box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
+}

@@ -1,0 +1,241 @@
+/* 🌤️ Loading Screen - Ethereal Focus Theme */
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #A1C4FD 0%, #C2E9FB 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: #1E1E1E;
+  font-family: 'Manrope', sans-serif;
+}
+
+.loading-content {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 2rem;
+}
+
+.loading-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  color: #4B9DEA;
+  text-shadow: 0 2px 8px rgba(75, 157, 234, 0.3);
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from { opacity: 0.8; }
+  to { opacity: 1; }
+}
+
+.loading-track {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  margin-bottom: 2rem;
+}
+
+.loading-bar {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+.loading-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #6BE585, #4B9DEA);
+  border-radius: 4px;
+  width: 0%;
+  animation: loadProgress 3s ease-out forwards;
+  box-shadow: 0 0 12px rgba(107, 229, 133, 0.5);
+}
+
+@keyframes loadProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.running-person {
+  position: absolute;
+  bottom: 35px;
+  left: 0;
+  width: 30px;
+  height: 40px;
+  animation: runAcross 3s ease-out forwards, bounce 0.3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes runAcross {
+  from { 
+    left: 0; 
+    transform: translateX(0);
+  }
+  to { 
+    left: calc(100% - 60px); 
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Custom Running Person */
+.person-head {
+  width: 8px;
+  height: 8px;
+  background: #4B9DEA;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 11px;
+  box-shadow: 0 2px 4px rgba(75, 157, 234, 0.3);
+}
+
+.person-body {
+  width: 4px;
+  height: 16px;
+  background: #4B9DEA;
+  border-radius: 2px;
+  position: absolute;
+  top: 8px;
+  left: 13px;
+  box-shadow: 0 2px 4px rgba(75, 157, 234, 0.3);
+}
+
+.person-arm {
+  width: 2px;
+  height: 8px;
+  background: #4B9DEA;
+  border-radius: 1px;
+  position: absolute;
+  top: 10px;
+  transform-origin: top center;
+  box-shadow: 0 1px 2px rgba(75, 157, 234, 0.3);
+}
+
+.person-arm.left {
+  left: 10px;
+  animation: armSwingLeft 0.6s ease-in-out infinite;
+}
+
+.person-arm.right {
+  left: 18px;
+  animation: armSwingRight 0.6s ease-in-out infinite;
+}
+
+@keyframes armSwingLeft {
+  0%, 100% { transform: rotate(20deg); }
+  50% { transform: rotate(-20deg); }
+}
+
+@keyframes armSwingRight {
+  0%, 100% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+}
+
+.person-leg {
+  width: 3px;
+  height: 12px;
+  background: #4B9DEA;
+  border-radius: 1px;
+  position: absolute;
+  top: 24px;
+  transform-origin: top center;
+  box-shadow: 0 1px 2px rgba(75, 157, 234, 0.3);
+}
+
+.person-leg.left {
+  left: 11px;
+  animation: legSwingLeft 0.6s ease-in-out infinite;
+}
+
+.person-leg.right {
+  left: 16px;
+  animation: legSwingRight 0.6s ease-in-out infinite;
+}
+
+@keyframes legSwingLeft {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(30deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+@keyframes legSwingRight {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(30deg); }
+}
+
+.clock-target {
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+  font-size: 2rem;
+  animation: clockTick 0.5s ease-in-out infinite;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes clockTick {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.1); }
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #4B5563;
+  text-shadow: 0 2px 8px rgba(75, 85, 99, 0.1);
+  animation: textFade 2s ease-in-out infinite alternate;
+}
+
+@keyframes textFade {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loading-content {
+    padding: 0 1rem;
+  }
+  
+  .loading-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .loading-track {
+    height: 60px;
+  }
+  
+  .running-person {
+    width: 25px;
+    height: 35px;
+  }
+  
+  .clock-target {
+    font-size: 1.5rem;
+  }
+  
+  .loading-text {
+    font-size: 1rem;
+  }
+}
