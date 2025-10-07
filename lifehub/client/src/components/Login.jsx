@@ -36,14 +36,7 @@ function Login() {
       if (user) {
         navigate("/dashboard");
       } else {
-        console.error('Google sign-in error:', authError);
-        if (authError.includes('popup-closed-by-user')) {
-          setError('Sign-in cancelled. Please try again.');
-        } else if (authError.includes('popup-blocked')) {
-          setError('Popup blocked. Please allow popups and try again.');
-        } else {
-          setError('Google sign-in failed. Please try again.');
-        }
+        setError(authError || 'Google sign-in failed. Please try again.');
       }
     } catch (error) {
       console.error('Google sign-in error:', error);

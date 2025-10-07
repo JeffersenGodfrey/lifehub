@@ -1,0 +1,16 @@
+{
+  "name": "LifeHub - Your Productivity Companion",
+  "short_name": "LifeHub",
+  "description": "A comprehensive life management system for productivity and wellness",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#4B9DEA",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml"
+    }
+  ]
+}

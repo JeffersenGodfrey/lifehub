@@ -36,10 +36,24 @@ export const signupWithEmail = async (email, password, displayName) => {
 export const loginWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider()
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    })
     const result = await signInWithPopup(auth, provider)
     return { user: result.user, error: null }
   } catch (error) {
-    return { user: null, error: error.message }
+    console.error('Google login error:', error)
+    let errorMessage = 'Google sign-in failed. Please try again.'
+    
+    if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage = 'Sign-in cancelled. Please try again.'
+    } else if (error.code === 'auth/popup-blocked') {
+      errorMessage = 'Popup blocked. Please allow popups and try again.'
+    } else if (error.code === 'auth/cancelled-popup-request') {
+      errorMessage = 'Sign-in cancelled. Please try again.'
+    }
+    
+    return { user: null, error: errorMessage }
   }
 }
 
