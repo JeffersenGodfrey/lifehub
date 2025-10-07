@@ -39,10 +39,17 @@ export const loginWithGoogle = async () => {
     provider.setCustomParameters({
       prompt: 'select_account'
     })
+    
+    // Clear any existing auth state
+    await signOut(auth).catch(() => {})
+    
     const result = await signInWithPopup(auth, provider)
     return { user: result.user, error: null }
   } catch (error) {
     console.error('Google login error:', error)
+    console.error('Error code:', error.code)
+    console.error('Error message:', error.message)
+    
     let errorMessage = 'Google sign-in failed. Please try again.'
     
     if (error.code === 'auth/popup-closed-by-user') {
@@ -51,6 +58,8 @@ export const loginWithGoogle = async () => {
       errorMessage = 'Popup blocked. Please allow popups and try again.'
     } else if (error.code === 'auth/cancelled-popup-request') {
       errorMessage = 'Sign-in cancelled. Please try again.'
+    } else if (error.code === 'auth/unauthorized-domain') {
+      errorMessage = 'Domain not authorized. Please contact support.'
     }
     
     return { user: null, error: errorMessage }
