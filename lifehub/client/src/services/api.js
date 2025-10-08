@@ -69,3 +69,16 @@ export const wellnessAPI = {
     method: 'POST',
   }),
 };
+
+// User API functions
+export const userAPI = {
+  createOrUpdateProfile: (userData) => apiCall('/users/profile', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  }),
+  getProfile: () => apiCall('/users/profile'),
+  updateNotifications: (enabled) => apiCall('/users/notifications', {
+    method: 'PUT',
+    body: JSON.stringify({ notificationsEnabled: enabled }),
+  }),
+};

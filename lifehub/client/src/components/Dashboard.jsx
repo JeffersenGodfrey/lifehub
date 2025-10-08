@@ -41,12 +41,24 @@ const Dashboard = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
       if (firebaseUser) {
-        setUser({
+        const userData = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
           email: firebaseUser.email,
           photoURL: firebaseUser.photoURL
-        })
+        }
+        setUser(userData)
+        
+        // Create/update user profile in backend for notifications
+        try {
+          const { userAPI } = await import('../services/api')
+          await userAPI.createOrUpdateProfile({
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0]
+          })
+        } catch (error) {
+          console.log('Failed to sync user profile:', error)
+        }
         
         // Check if user needs onboarding
         const hasOnboarded = localStorage.getItem('lifehub-onboarded')
