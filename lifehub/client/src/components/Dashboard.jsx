@@ -10,7 +10,7 @@ import DashboardWellness from './DashboardWellness'
 import WellnessChart from './WellnessChart'
 import Welcome from './Welcome'
 import LoadingScreen from './LoadingScreen'
-import BackendStatus from './BackendStatus'
+
 import '../styles/App.css'
 import '../styles/dashboard-styles.css'
 import '../styles/focus-summary-styles.css'
@@ -325,7 +325,6 @@ const Dashboard = () => {
 
   return (
     <div className="app">
-      <BackendStatus />
       <nav className="navbar">
         <div className="nav-brand">
           <h2>LifeHub</h2>
