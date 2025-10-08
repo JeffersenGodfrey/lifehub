@@ -15,7 +15,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:3000", "https://lifehub-task.vercel.app"],
+  origin: [
+    "http://localhost:3000", 
+    "https://lifehub-task.vercel.app",
+    "https://lifehubtask-3getiyjvx-jeffersen-godfreys-projects.vercel.app",
+    /\.vercel\.app$/
+  ],
   credentials: true
 }));
 app.use(express.json());
