@@ -12,5 +12,7 @@ const wellnessSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+wellnessSchema.index({ userId: 1, date: 1 }, { unique: true });
+
 const Wellness = mongoose.model("Wellness", wellnessSchema);
 export default Wellness;

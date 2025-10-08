@@ -1,23 +1,29 @@
 import React, { useState } from 'react'
+import { habitAPI } from '../services/api'
 import '../styles/habit-manager.css'
 
 const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
   const [isAddingHabit, setIsAddingHabit] = useState(false)
-  const [newHabit, setNewHabit] = useState({ name: '', icon: '🏃‍♂️' })
+  const [newHabit, setNewHabit] = useState({ name: '', icon: '🏃♂️' })
 
-  const handleAddHabit = () => {
+  const handleAddHabit = async () => {
     if (newHabit.name.trim()) {
-      onHabitAdd({
-        id: Date.now(),
-        name: `${newHabit.icon} ${newHabit.name}`,
-        completed: false
-      })
-      setNewHabit({ name: '', icon: '🏃‍♂️' })
-      setIsAddingHabit(false)
+      try {
+        const habitData = {
+          name: `${newHabit.icon} ${newHabit.name}`,
+          completed: false
+        }
+        const createdHabit = await habitAPI.createHabit(habitData)
+        onHabitAdd(createdHabit)
+        setNewHabit({ name: '', icon: '🏃♂️' })
+        setIsAddingHabit(false)
+      } catch (error) {
+        console.error('Failed to add habit:', error)
+      }
     }
   }
 
-  const habitIcons = ['🏃‍♂️', '🧘‍♀️', '📚', '💧', '🥗', '🎯', '💤', '🚶‍♂️', '🧠', '❤️']
+  const habitIcons = ['🏃♂️', '🧘♀️', '📚', '💧', '🥗', '🎯', '💤', '🚶♂️', '🧠', '❤️']
 
   return (
     <div className="habit-manager">
@@ -58,7 +64,7 @@ const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
               <button 
                 onClick={() => {
                   setIsAddingHabit(false)
-                  setNewHabit({ name: '', icon: '🏃‍♂️' })
+                  setNewHabit({ name: '', icon: '🏃♂️' })
                 }} 
                 className="cancel-habit-btn"
               >
@@ -72,18 +78,18 @@ const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
       {/* Habits List */}
       <div className="habit-list">
         {habits.map(habit => (
-          <div key={habit.id} className={`habit-item ${habit.completed ? 'completed' : ''}`}>
+          <div key={habit._id || habit.id} className={`habit-item ${habit.completed ? 'completed' : ''}`}>
             <span className="habit-name">{habit.name}</span>
             <div className="habit-actions">
               <button
                 className="habit-toggle"
-                onClick={() => onHabitToggle(habit.id)}
+                onClick={() => onHabitToggle(habit._id || habit.id)}
               >
                 {habit.completed ? '✅' : '⏳'}
               </button>
               <button
                 className="habit-delete"
-                onClick={() => onHabitDelete(habit.id)}
+                onClick={() => onHabitDelete(habit._id || habit.id)}
               >
                 🗑️
               </button>

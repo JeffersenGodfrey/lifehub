@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logout, onAuthStateChange } from '../firebase/auth'
+import { habitAPI, timelineAPI, focusAPI } from '../services/api'
 import TaskDashboard from './TaskDashboard'
 import TimelineManager from './TimelineManager'
 import HabitManager from './HabitManager'
@@ -31,12 +32,8 @@ const Dashboard = () => {
     sessions: 0
   })
 
-  const [timeline, setTimeline] = useState([
-    { id: 1, time: '7:00 AM', activity: 'Morning Workout', icon: '🏋️' },
-    { id: 2, time: '9:00 AM', activity: 'Work Session', icon: '💻' },
-    { id: 3, time: '12:00 PM', activity: 'Lunch Break', icon: '🍽️' },
-    { id: 4, time: '3:00 PM', activity: 'Complete Tasks', icon: '📝' }
-  ])
+  const [timeline, setTimeline] = useState([])
+  const [habits, setHabits] = useState([])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
@@ -61,7 +58,9 @@ const Dashboard = () => {
               email: firebaseUser.email,
               displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0]
             })
-          }).catch(() => {})
+          }).catch(error => {
+            console.warn('User profile sync failed:', error)
+          })
         }, 1000)
         
         // Check if user needs onboarding
@@ -69,6 +68,9 @@ const Dashboard = () => {
         if (!hasOnboarded) {
           setShowWelcome(true)
         }
+        
+        // Load user data
+        loadUserData()
         
         // Ensure loading screen shows for at least 3 seconds
         setTimeout(() => {
@@ -81,6 +83,26 @@ const Dashboard = () => {
     return () => unsubscribe()
   }, [navigate])
 
+  const loadUserData = async () => {
+    try {
+      const [habitsData, timelineData, focusData] = await Promise.all([
+        habitAPI.getHabits().catch(() => []),
+        timelineAPI.getTimeline().catch(() => []),
+        focusAPI.getFocusStats().catch(() => ({ sessions: 0 }))
+      ])
+      setHabits(habitsData)
+      setTimeline(timelineData.length > 0 ? timelineData : [
+        { time: '7:00 AM', activity: 'Morning Workout', icon: '🏋️' },
+        { time: '9:00 AM', activity: 'Work Session', icon: '💻' },
+        { time: '12:00 PM', activity: 'Lunch Break', icon: '🍽️' },
+        { time: '3:00 PM', activity: 'Complete Tasks', icon: '📝' }
+      ])
+      setFocusTimer(prev => ({ ...prev, sessions: focusData.sessions || 0 }))
+    } catch (error) {
+      console.error('Failed to load user data:', error)
+    }
+  }
+
   const handleLogout = async () => {
     const { success } = await logout()
     if (success) {
@@ -90,9 +112,49 @@ const Dashboard = () => {
 
 
 
-  const addTimelineItem = (timelineData) => setTimeline([...timeline, timelineData])
-  const updateTimelineItem = (updatedItem) => setTimeline(timeline.map(item => item.id === updatedItem.id ? updatedItem : item))
-  const deleteTimelineItem = (id) => setTimeline(timeline.filter(item => item.id !== id))
+  const addHabit = (habit) => setHabits([...habits, habit])
+  const toggleHabit = async (habitId) => {
+    try {
+      const habit = habits.find(h => h._id === habitId)
+      const updatedHabit = await habitAPI.updateHabit(habitId, { ...habit, completed: !habit.completed })
+      setHabits(habits.map(h => h._id === habitId ? updatedHabit : h))
+    } catch (error) {
+      console.error('Failed to toggle habit:', error)
+    }
+  }
+  const deleteHabit = async (habitId) => {
+    try {
+      await habitAPI.deleteHabit(habitId)
+      setHabits(habits.filter(h => h._id !== habitId))
+    } catch (error) {
+      console.error('Failed to delete habit:', error)
+    }
+  }
+
+  const addTimelineItem = async (timelineData) => {
+    try {
+      const createdItem = await timelineAPI.createTimelineItem(timelineData)
+      setTimeline([...timeline, createdItem])
+    } catch (error) {
+      console.error('Failed to add timeline item:', error)
+    }
+  }
+  const updateTimelineItem = async (updatedItem) => {
+    try {
+      const updated = await timelineAPI.updateTimelineItem(updatedItem._id, updatedItem)
+      setTimeline(timeline.map(item => item._id === updatedItem._id ? updated : item))
+    } catch (error) {
+      console.error('Failed to update timeline item:', error)
+    }
+  }
+  const deleteTimelineItem = async (id) => {
+    try {
+      await timelineAPI.deleteTimelineItem(id)
+      setTimeline(timeline.filter(item => item._id !== id))
+    } catch (error) {
+      console.error('Failed to delete timeline item:', error)
+    }
+  }
 
 
 
@@ -116,7 +178,10 @@ const Dashboard = () => {
       if (focusTimer.isBreak) {
         setFocusTimer(prev => ({ ...prev, timeLeft: 25 * 60, isBreak: false, isActive: false }))
       } else {
-        setFocusTimer(prev => ({ ...prev, timeLeft: 5 * 60, isBreak: true, isActive: false, sessions: prev.sessions + 1 }))
+        const newSessions = focusTimer.sessions + 1
+        setFocusTimer(prev => ({ ...prev, timeLeft: 5 * 60, isBreak: true, isActive: false, sessions: newSessions }))
+        // Save focus session to backend
+        focusAPI.updateFocusStats({ sessions: newSessions, totalMinutes: newSessions * 25 }).catch(console.error)
       }
     }
     return () => clearInterval(interval)
@@ -167,7 +232,7 @@ const Dashboard = () => {
           <h3>Today's Timeline</h3>
           <div className="timeline-scroll">
             {timeline.map(item => (
-              <div key={item.id} className="timeline-item">
+              <div key={item._id || item.id} className="timeline-item">
                 <div className="time-badge">{item.time}</div>
                 <div className="timeline-content">
                   <span className="timeline-icon">{item.icon}</span>
@@ -176,6 +241,16 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="habits-section">
+          <h3>Daily Habits</h3>
+          <HabitManager 
+            habits={habits}
+            onHabitAdd={addHabit}
+            onHabitToggle={toggleHabit}
+            onHabitDelete={deleteHabit}
+          />
         </div>
 
         <div className="wellness-focus-zone">

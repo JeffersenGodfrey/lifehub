@@ -31,7 +31,14 @@ export const createWellnessLog = async (req, res) => {
 // Update a wellness log by ID
 export const updateWellnessLog = async (req, res) => {
   try {
-    const updatedLog = await Wellness.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedLog = await Wellness.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      req.body,
+      { new: true }
+    );
+    if (!updatedLog) {
+      return res.status(404).json({ message: "Wellness log not found" });
+    }
     res.json(updatedLog);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -41,7 +48,10 @@ export const updateWellnessLog = async (req, res) => {
 // Delete a wellness log by ID
 export const deleteWellnessLog = async (req, res) => {
   try {
-    await Wellness.findByIdAndDelete(req.params.id);
+    const deletedLog = await Wellness.findOneAndDelete({ _id: req.params.id, userId: req.userId });
+    if (!deletedLog) {
+      return res.status(404).json({ message: "Wellness log not found" });
+    }
     res.json({ message: "Wellness log deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });

@@ -9,9 +9,9 @@ const authMiddleware = (req, res, next) => {
   
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
   
-  // For development, we'll use the token as userId directly
-  // In production, you would verify the Firebase token and extract the UID
+  // Use the token as userId directly (Firebase UID)
   req.userId = token;
+  console.log('Auth middleware - userId:', req.userId); // Debug log
   next();
 };
 

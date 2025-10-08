@@ -1,12 +1,12 @@
 import { auth } from '../firebase/config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://lifehub-be7p.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Get current user token
 const getAuthToken = async () => {
   const user = auth.currentUser;
   if (user) {
-    return user.uid; // Using UID as token for development
+    return user.uid; // Using UID as token
   }
   throw new Error('User not authenticated');
 };
@@ -67,6 +67,47 @@ export const wellnessAPI = {
   }),
   cleanupDuplicates: () => apiCall('/wellness/cleanup', {
     method: 'POST',
+  }),
+};
+
+// Habit API functions
+export const habitAPI = {
+  getHabits: () => apiCall('/habits'),
+  createHabit: (habit) => apiCall('/habits', {
+    method: 'POST',
+    body: JSON.stringify(habit),
+  }),
+  updateHabit: (id, habit) => apiCall(`/habits/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(habit),
+  }),
+  deleteHabit: (id) => apiCall(`/habits/${id}`, {
+    method: 'DELETE',
+  }),
+};
+
+// Timeline API functions
+export const timelineAPI = {
+  getTimeline: () => apiCall('/timeline'),
+  createTimelineItem: (item) => apiCall('/timeline', {
+    method: 'POST',
+    body: JSON.stringify(item),
+  }),
+  updateTimelineItem: (id, item) => apiCall(`/timeline/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(item),
+  }),
+  deleteTimelineItem: (id) => apiCall(`/timeline/${id}`, {
+    method: 'DELETE',
+  }),
+};
+
+// Focus API functions
+export const focusAPI = {
+  getFocusStats: () => apiCall('/focus'),
+  updateFocusStats: (stats) => apiCall('/focus', {
+    method: 'POST',
+    body: JSON.stringify(stats),
   }),
 };
 

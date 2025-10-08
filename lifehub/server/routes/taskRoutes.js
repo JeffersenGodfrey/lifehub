@@ -5,14 +5,11 @@ import {
   updateTask,
   deleteTask,
 } from "../controllers/taskController.js";
+import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Test auth middleware (replace later with real auth)
-router.use((req, res, next) => {
-  req.userId = "12345"; // temporary test userId
-  next();
-});
+router.use(authMiddleware);
 
 router.get("/", getTasks);
 router.post("/", createTask);
