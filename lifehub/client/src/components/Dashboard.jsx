@@ -50,15 +50,12 @@ const Dashboard = () => {
         setUser(userData)
         
         // Create/update user profile in backend for notifications
-        try {
-          const { userAPI } = await import('../services/api')
-          await userAPI.createOrUpdateProfile({
+        import('../services/api').then(({ userAPI }) => {
+          userAPI.createOrUpdateProfile({
             email: firebaseUser.email,
             displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0]
-          })
-        } catch (error) {
-          console.log('Failed to sync user profile:', error)
-        }
+          }).catch(error => console.log('Failed to sync user profile:', error))
+        }).catch(() => {})
         
         // Check if user needs onboarding
         const hasOnboarded = localStorage.getItem('lifehub-onboarded')
