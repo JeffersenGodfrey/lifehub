@@ -36,11 +36,10 @@ function Login() {
       if (user) {
         navigate("/dashboard");
       } else {
-        setError(authError || 'Google sign-in failed. Please try again.');
+        setError(authError || 'Please use email/password login.');
       }
     } catch (error) {
-      console.error('Google sign-in error:', error);
-      setError('Google sign-in failed. Please try again.');
+      setError('Please use email/password login.');
     }
     setLoading(false);
   };

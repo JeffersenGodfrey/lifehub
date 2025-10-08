@@ -5,7 +5,6 @@ import cors from "cors";
 import taskRoutes from "./routes/taskRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import { startNotificationScheduler } from "./services/notificationScheduler.js";
 
 dotenv.config();
 
@@ -40,5 +39,5 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  startNotificationScheduler();
+  console.log('📧 Email notifications ready (configure EMAIL_USER and EMAIL_PASS)');
 });

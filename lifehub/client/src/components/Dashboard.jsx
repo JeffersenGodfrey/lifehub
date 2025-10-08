@@ -49,13 +49,20 @@ const Dashboard = () => {
         }
         setUser(userData)
         
-        // Create/update user profile in backend for notifications
-        import('../services/api').then(({ userAPI }) => {
-          userAPI.createOrUpdateProfile({
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0]
-          }).catch(error => console.log('Failed to sync user profile:', error))
-        }).catch(() => {})
+        // Simple user profile sync
+        setTimeout(() => {
+          fetch(`${import.meta.env.VITE_API_URL || 'https://lifehub-be7p.onrender.com/api'}/users/profile`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${firebaseUser.uid}`
+            },
+            body: JSON.stringify({
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0]
+            })
+          }).catch(() => {})
+        }, 1000)
         
         // Check if user needs onboarding
         const hasOnboarded = localStorage.getItem('lifehub-onboarded')
