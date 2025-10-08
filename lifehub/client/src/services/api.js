@@ -1,6 +1,8 @@
 import { auth } from '../firebase/config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://lifehub-be7p.onrender.com/api' : 'http://localhost:5000/api');
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://lifehub-be7p.onrender.com/api';
+
+console.log('API Base URL:', API_BASE_URL);
 
 // Get current user token
 const getAuthToken = async () => {
@@ -15,7 +17,10 @@ const getAuthToken = async () => {
 const apiCall = async (endpoint, options = {}) => {
   try {
     const token = await getAuthToken();
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log('Making API call to:', url);
+    
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
@@ -24,11 +29,17 @@ const apiCall = async (endpoint, options = {}) => {
       ...options,
     });
 
+    console.log('API response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('API response data:', data);
+    return data;
   } catch (error) {
     console.error('API call failed:', error);
     throw error;

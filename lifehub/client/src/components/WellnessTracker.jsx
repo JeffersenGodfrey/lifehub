@@ -61,6 +61,9 @@ const WellnessTracker = () => {
   }
 
   const updateWellnessData = async (updates) => {
+    // Update UI immediately for better UX
+    setWellnessData(prev => ({ ...prev, ...updates }))
+    
     try {
       const today = new Date().toISOString().split('T')[0]
       const wellnessLog = {
@@ -71,13 +74,16 @@ const WellnessTracker = () => {
         mood: updates.mood !== undefined ? ['😢', '😕', '😊', '😄', '🤩'][updates.mood] : ['😢', '😕', '😊', '😄', '🤩'][wellnessData.mood]
       }
 
-      await wellnessAPI.createWellnessLog(wellnessLog)
-      setWellnessData(prev => ({ ...prev, ...updates }))
+      console.log('Updating wellness data:', wellnessLog)
+      const result = await wellnessAPI.createWellnessLog(wellnessLog)
+      console.log('Wellness update successful:', result)
       
       // Notify other components about the update
       window.dispatchEvent(new CustomEvent('wellnessDataUpdated'))
     } catch (error) {
       console.error('Failed to update wellness data:', error)
+      // Revert UI changes on error
+      loadTodaysWellness()
     }
   }
 
