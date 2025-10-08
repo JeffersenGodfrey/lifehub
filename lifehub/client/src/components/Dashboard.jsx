@@ -68,8 +68,10 @@ const Dashboard = () => {
           setShowWelcome(true)
         }
         
-        // Load user data
-        loadUserData()
+        // Load user data after a short delay to ensure auth is ready
+        setTimeout(() => {
+          loadUserData()
+        }, 500)
         
         // Ensure loading screen shows for at least 3 seconds
         setTimeout(() => {
@@ -82,7 +84,7 @@ const Dashboard = () => {
     return () => unsubscribe()
   }, [navigate])
 
-  const loadUserData = async () => {
+  const loadUserData = async (retryCount = 0) => {
     try {
       const [timelineData, focusData] = await Promise.all([
         timelineAPI.getTimeline().catch(() => []),
@@ -97,6 +99,10 @@ const Dashboard = () => {
       setFocusTimer(prev => ({ ...prev, sessions: focusData.sessions || 0 }))
     } catch (error) {
       console.error('Failed to load user data:', error)
+      // Retry up to 3 times with increasing delay
+      if (retryCount < 3) {
+        setTimeout(() => loadUserData(retryCount + 1), (retryCount + 1) * 1000)
+      }
     }
   }
 

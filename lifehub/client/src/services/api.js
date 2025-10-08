@@ -4,11 +4,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Get current user token
 const getAuthToken = async () => {
-  const user = auth.currentUser;
-  if (user) {
-    return user.uid; // Using UID as token
-  }
-  throw new Error('User not authenticated');
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe();
+      if (user) {
+        resolve(user.uid);
+      } else {
+        reject(new Error('User not authenticated'));
+      }
+    });
+  });
 };
 
 // Generic API call function

@@ -14,7 +14,8 @@ const WellnessTracker = () => {
 
   useEffect(() => {
     loadTodaysWellness()
-    loadHabits()
+    // Load habits after a short delay to ensure auth is ready
+    setTimeout(() => loadHabits(), 500)
     
     // Refresh data every 10 seconds to match dashboard
     const interval = setInterval(loadTodaysWellness, 10000)
@@ -61,12 +62,16 @@ const WellnessTracker = () => {
     }
   }
 
-  const loadHabits = async () => {
+  const loadHabits = async (retryCount = 0) => {
     try {
       const habitsData = await habitAPI.getHabits()
       setHabits(habitsData)
     } catch (error) {
       console.error('Failed to load habits:', error)
+      // Retry up to 3 times with increasing delay
+      if (retryCount < 3) {
+        setTimeout(() => loadHabits(retryCount + 1), (retryCount + 1) * 1000)
+      }
     }
   }
 
