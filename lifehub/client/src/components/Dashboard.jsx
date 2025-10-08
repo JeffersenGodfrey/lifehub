@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logout, onAuthStateChange } from '../firebase/auth'
-import { habitAPI, timelineAPI, focusAPI } from '../services/api'
+import { timelineAPI, focusAPI } from '../services/api'
 import TaskDashboard from './TaskDashboard'
 import TimelineManager from './TimelineManager'
 import HabitManager from './HabitManager'
@@ -33,7 +33,6 @@ const Dashboard = () => {
   })
 
   const [timeline, setTimeline] = useState([])
-  const [habits, setHabits] = useState([])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
@@ -85,12 +84,10 @@ const Dashboard = () => {
 
   const loadUserData = async () => {
     try {
-      const [habitsData, timelineData, focusData] = await Promise.all([
-        habitAPI.getHabits().catch(() => []),
+      const [timelineData, focusData] = await Promise.all([
         timelineAPI.getTimeline().catch(() => []),
         focusAPI.getFocusStats().catch(() => ({ sessions: 0 }))
       ])
-      setHabits(habitsData)
       setTimeline(timelineData.length > 0 ? timelineData : [
         { time: '7:00 AM', activity: 'Morning Workout', icon: '🏋️' },
         { time: '9:00 AM', activity: 'Work Session', icon: '💻' },
@@ -111,25 +108,6 @@ const Dashboard = () => {
   }
 
 
-
-  const addHabit = (habit) => setHabits([...habits, habit])
-  const toggleHabit = async (habitId) => {
-    try {
-      const habit = habits.find(h => h._id === habitId)
-      const updatedHabit = await habitAPI.updateHabit(habitId, { ...habit, completed: !habit.completed })
-      setHabits(habits.map(h => h._id === habitId ? updatedHabit : h))
-    } catch (error) {
-      console.error('Failed to toggle habit:', error)
-    }
-  }
-  const deleteHabit = async (habitId) => {
-    try {
-      await habitAPI.deleteHabit(habitId)
-      setHabits(habits.filter(h => h._id !== habitId))
-    } catch (error) {
-      console.error('Failed to delete habit:', error)
-    }
-  }
 
   const addTimelineItem = async (timelineData) => {
     try {
@@ -241,16 +219,6 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="habits-section">
-          <h3>Daily Habits</h3>
-          <HabitManager 
-            habits={habits}
-            onHabitAdd={addHabit}
-            onHabitToggle={toggleHabit}
-            onHabitDelete={deleteHabit}
-          />
         </div>
 
         <div className="wellness-focus-zone">

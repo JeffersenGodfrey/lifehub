@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { wellnessAPI } from '../services/api'
+import { wellnessAPI, habitAPI } from '../services/api'
 import HabitManager from './HabitManager'
 
 const WellnessTracker = () => {
@@ -14,6 +14,7 @@ const WellnessTracker = () => {
 
   useEffect(() => {
     loadTodaysWellness()
+    loadHabits()
     
     // Refresh data every 10 seconds to match dashboard
     const interval = setInterval(loadTodaysWellness, 10000)
@@ -57,6 +58,15 @@ const WellnessTracker = () => {
       console.error('Failed to load wellness data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadHabits = async () => {
+    try {
+      const habitsData = await habitAPI.getHabits()
+      setHabits(habitsData)
+    } catch (error) {
+      console.error('Failed to load habits:', error)
     }
   }
 
@@ -179,8 +189,23 @@ const WellnessTracker = () => {
           <HabitManager
             habits={habits}
             onHabitAdd={(habit) => setHabits([...habits, habit])}
-            onHabitToggle={(id) => setHabits(habits.map(h => h.id === id ? {...h, completed: !h.completed} : h))}
-            onHabitDelete={(id) => setHabits(habits.filter(h => h.id !== id))}
+            onHabitToggle={async (habitId) => {
+              try {
+                const habit = habits.find(h => h._id === habitId)
+                const updatedHabit = await habitAPI.updateHabit(habitId, { ...habit, completed: !habit.completed })
+                setHabits(habits.map(h => h._id === habitId ? updatedHabit : h))
+              } catch (error) {
+                console.error('Failed to toggle habit:', error)
+              }
+            }}
+            onHabitDelete={async (habitId) => {
+              try {
+                await habitAPI.deleteHabit(habitId)
+                setHabits(habits.filter(h => h._id !== habitId))
+              } catch (error) {
+                console.error('Failed to delete habit:', error)
+              }
+            }}
           />
         </div>
       </div>
