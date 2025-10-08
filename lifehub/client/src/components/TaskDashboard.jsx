@@ -19,17 +19,25 @@ const TaskDashboard = () => {
 
   // Load tasks from MongoDB
   useEffect(() => {
-    loadTasks()
+    // Delay loading to ensure auth is ready
+    setTimeout(() => loadTasks(), 500)
   }, [])
 
-  const loadTasks = async () => {
+  const loadTasks = async (retryCount = 0) => {
     try {
       const data = await taskAPI.getTasks()
       setTasks(data)
     } catch (error) {
       console.error('Failed to load tasks:', error)
+      // Retry up to 3 times with increasing delay
+      if (retryCount < 3) {
+        setTimeout(() => loadTasks(retryCount + 1), (retryCount + 1) * 1000)
+        return // Don't set loading to false yet
+      }
     } finally {
-      setLoading(false)
+      if (retryCount === 0) { // Only set loading false on final attempt
+        setLoading(false)
+      }
     }
   }
 
@@ -48,6 +56,7 @@ const TaskDashboard = () => {
         setIsAddingTask(false)
       } catch (error) {
         console.error('Failed to add task:', error)
+        alert('Failed to create task. Please try again.')
       }
     }
   }

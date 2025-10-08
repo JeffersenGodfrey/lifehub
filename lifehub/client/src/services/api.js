@@ -4,8 +4,20 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Get current user token
 const getAuthToken = async () => {
+  // First try current user
+  if (auth.currentUser) {
+    return auth.currentUser.uid;
+  }
+  
+  // If no current user, wait for auth state
   return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      unsubscribe();
+      reject(new Error('Authentication timeout'));
+    }, 5000);
+    
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      clearTimeout(timeout);
       unsubscribe();
       if (user) {
         resolve(user.uid);
