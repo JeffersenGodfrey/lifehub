@@ -15,12 +15,27 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    "http://localhost:3000", 
-    "https://lifehub-task.vercel.app",
-    "https://lifehubtask-3getiyjvx-jeffersen-godfreys-projects.vercel.app",
-    /\.vercel\.app$/
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and vercel domains
+    if (origin.includes('localhost') || origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow specific domains
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://lifehub-task.vercel.app"
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json());
