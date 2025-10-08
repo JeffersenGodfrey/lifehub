@@ -40,7 +40,7 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.send("LifeHub API is running!");
+  res.send("LifeHub API is running! Updated CORS");
 });
 
 app.listen(PORT, () => {
