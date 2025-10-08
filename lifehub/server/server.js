@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import taskRoutes from "./routes/taskRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
+import { startNotificationScheduler } from "./services/notificationScheduler.js";
 
 dotenv.config();
 
@@ -35,4 +36,7 @@ app.get("/", (req, res) => {
   res.send("LifeHub API is running!");
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  startNotificationScheduler();
+});
