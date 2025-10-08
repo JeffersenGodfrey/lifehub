@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import Task from '../models/Task.js';
 import Wellness from '../models/Wellness.js';
+import User from '../models/User.js';
 import { sendTaskReminder, sendWellnessReminder } from './emailService.js';
 
 // Check for overdue tasks daily at 9 AM
@@ -26,9 +27,10 @@ cron.schedule('0 9 * * *', async () => {
 
     // Send reminders to each user
     for (const [userId, tasks] of Object.entries(tasksByUser)) {
-      const userEmail = tasks[0].userId.email; // Assuming user email is stored
-      const userName = tasks[0].userId.displayName || 'User';
-      await sendTaskReminder(userEmail, userName, tasks);
+      const user = await User.findOne({ firebaseUid: userId });
+      if (user && user.notificationsEnabled) {
+        await sendTaskReminder(user.email, user.displayName, tasks);
+      }
     }
   } catch (error) {
     console.error('Error checking overdue tasks:', error);
@@ -44,12 +46,14 @@ cron.schedule('0 20 * * *', async () => {
     const users = await Wellness.distinct('userId');
     
     for (const userId of users) {
+      const user = await User.findOne({ firebaseUid: userId });
+      if (!user || !user.notificationsEnabled) continue;
+      
       const todayLog = await Wellness.findOne({ userId, date: today });
       
       if (!todayLog) {
         const missedGoals = ['Water intake', 'Sleep tracking', 'Mood check-in', 'Steps count'];
-        // Note: You'll need to get user email from your user collection
-        // await sendWellnessReminder(userEmail, userName, missedGoals);
+        await sendWellnessReminder(user.email, user.displayName, missedGoals);
       } else {
         const missedGoals = [];
         if (!todayLog.waterIntake || todayLog.waterIntake < 8) missedGoals.push('Water goal');
@@ -57,7 +61,7 @@ cron.schedule('0 20 * * *', async () => {
         if (!todayLog.steps || todayLog.steps < 10000) missedGoals.push('Steps goal');
         
         if (missedGoals.length > 0) {
-          // await sendWellnessReminder(userEmail, userName, missedGoals);
+          await sendWellnessReminder(user.email, user.displayName, missedGoals);
         }
       }
     }

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import taskRoutes from "./routes/taskRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { startNotificationScheduler } from "./services/notificationScheduler.js";
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use("/api/tasks", taskRoutes);
 app.use("/api/wellness", wellnessRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
