@@ -56,7 +56,12 @@ const TaskDashboard = () => {
         setIsAddingTask(false)
       } catch (error) {
         console.error('Failed to add task:', error)
-        alert('Failed to create task. Please try again.')
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        })
+        alert(`Failed to create task: ${error.message}`)
       }
     }
   }

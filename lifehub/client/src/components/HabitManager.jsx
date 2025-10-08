@@ -19,7 +19,12 @@ const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
         setIsAddingHabit(false)
       } catch (error) {
         console.error('Failed to add habit:', error)
-        alert('Failed to create habit. Please try again.')
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        })
+        alert(`Failed to create habit: ${error.message}`)
       }
     }
   }

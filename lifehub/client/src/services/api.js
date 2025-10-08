@@ -1,6 +1,7 @@
 import { auth } from '../firebase/config';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+console.log('API Base URL:', API_BASE_URL);
 
 // Get current user token
 const getAuthToken = async () => {
@@ -31,7 +32,10 @@ const getAuthToken = async () => {
 // Generic API call function
 const apiCall = async (endpoint, options = {}) => {
   try {
+    console.log('Making API call to:', `${API_BASE_URL}${endpoint}`);
     const token = await getAuthToken();
+    console.log('Using auth token:', token ? 'Present' : 'Missing');
+    
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -41,13 +45,23 @@ const apiCall = async (endpoint, options = {}) => {
       ...options,
     });
 
+    console.log('API response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`API Error ${response.status}: ${errorText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('API response data:', data);
+    return data;
   } catch (error) {
-    console.error('API call failed:', error);
+    console.error('API call failed:', {
+      endpoint,
+      error: error.message,
+      stack: error.stack
+    });
     throw error;
   }
 };
