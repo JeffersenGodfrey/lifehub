@@ -69,10 +69,21 @@ const TaskDashboard = () => {
   const handleTaskToggle = async (taskId) => {
     try {
       const task = tasks.find(t => t._id === taskId)
-      const updatedTask = await taskAPI.updateTask(taskId, { ...task, completed: !task.completed })
-      setTasks(tasks.map(t => t._id === taskId ? updatedTask : t))
+      if (!task) return
+      
+      // Update immediately in UI
+      setTasks(prevTasks => 
+        prevTasks.map(t => 
+          t._id === taskId ? { ...t, completed: !t.completed } : t
+        )
+      )
+      
+      // Send to backend
+      await taskAPI.updateTask(taskId, { completed: !task.completed })
     } catch (error) {
       console.error('Failed to toggle task:', error)
+      // Reload tasks on error
+      loadTasks()
     }
   }
 
