@@ -8,7 +8,7 @@ const SimpleWellness = () => {
     mood: 2
   })
 
-  const API_URL = 'http://localhost:5000/api'
+  const API_URL = 'https://lifehub-be7p.onrender.com/api'
   const moods = ['😢', '😕', '😊', '😄', '🤩']
 
   useEffect(() => {
