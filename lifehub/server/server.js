@@ -6,7 +6,6 @@ import taskRoutes from "./routes/taskRoutes.js";
 import wellnessRoutes from "./routes/wellnessRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import habitRoutes from "./routes/habitRoutes.js";
-import habitRoutes from "./routes/habitRoutes.js";
 import timelineRoutes from "./routes/timelineRoutes.js";
 import focusRoutes from "./routes/focusRoutes.js";
 
@@ -23,7 +22,6 @@ app.use(express.json());
 app.use("/api/tasks", taskRoutes);
 app.use("/api/wellness", wellnessRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/habits", habitRoutes);
 app.use("/api/habits", habitRoutes);
 app.use("/api/timeline", timelineRoutes);
 app.use("/api/focus", focusRoutes);
