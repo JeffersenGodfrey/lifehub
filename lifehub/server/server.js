@@ -15,10 +15,16 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+// Test routes without auth
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API working', timestamp: new Date() })
+})
+
 app.use("/api/tasks", taskRoutes);
 app.use("/api/wellness", wellnessRoutes);
 app.use("/api/users", userRoutes);
