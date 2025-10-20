@@ -22,9 +22,16 @@ const SimpleHabitManager = () => {
       if (response.ok) {
         const data = await response.json()
         setHabits(data)
+        return
       }
     } catch (error) {
-      console.error('Load habits failed:', error)
+      console.error('Load habits failed, using localStorage:', error)
+    }
+    
+    // Fallback to localStorage
+    const savedHabits = localStorage.getItem('lifehub_habits')
+    if (savedHabits) {
+      setHabits(JSON.parse(savedHabits))
     }
   }
 
@@ -32,6 +39,18 @@ const SimpleHabitManager = () => {
     if (!newHabitName.trim()) return
     
     setLoading(true)
+    const newHabit = {
+      _id: Date.now().toString(),
+      name: newHabitName,
+      completed: false,
+      createdAt: new Date().toISOString()
+    }
+    
+    // Add to UI immediately
+    const updatedHabits = [...habits, newHabit]
+    setHabits(updatedHabits)
+    setNewHabitName('')
+    
     try {
       const response = await fetch(`${API_URL}/habits`, {
         method: 'POST',
@@ -40,18 +59,20 @@ const SimpleHabitManager = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: newHabitName,
+          name: newHabit.name,
           completed: false
         })
       })
       
       if (response.ok) {
-        const newHabit = await response.json()
-        setHabits([...habits, newHabit])
-        setNewHabitName('')
+        const serverHabit = await response.json()
+        setHabits(habits.map(h => h._id === newHabit._id ? serverHabit : h))
+      } else {
+        localStorage.setItem('lifehub_habits', JSON.stringify(updatedHabits))
       }
     } catch (error) {
-      console.error('Add habit failed:', error)
+      console.error('Add habit failed, using localStorage:', error)
+      localStorage.setItem('lifehub_habits', JSON.stringify(updatedHabits))
     }
     setLoading(false)
   }

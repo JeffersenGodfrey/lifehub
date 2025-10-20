@@ -3,6 +3,7 @@ import SimpleTaskManager from './SimpleTaskManager'
 import SimpleHabitManager from './SimpleHabitManager'
 import SimpleWellness from './SimpleWellness'
 import TestConnection from './TestConnection'
+import BackendWakeup from './BackendWakeup'
 
 const WorkingDashboard = () => {
   const [activeTab, setActiveTab] = useState('test')
@@ -59,6 +60,7 @@ const WorkingDashboard = () => {
 
       {/* Content */}
       <div style={{ padding: '20px' }}>
+        <BackendWakeup />
         {ActiveComponent && <ActiveComponent />}
       </div>
 

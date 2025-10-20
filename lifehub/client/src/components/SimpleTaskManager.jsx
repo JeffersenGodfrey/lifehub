@@ -22,9 +22,16 @@ const SimpleTaskManager = () => {
       if (response.ok) {
         const data = await response.json()
         setTasks(data)
+        return
       }
     } catch (error) {
-      console.error('Load tasks failed:', error)
+      console.error('Load tasks failed, using localStorage:', error)
+    }
+    
+    // Fallback to localStorage
+    const savedTasks = localStorage.getItem('lifehub_tasks')
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks))
     }
   }
 
@@ -32,6 +39,20 @@ const SimpleTaskManager = () => {
     if (!newTaskTitle.trim()) return
     
     setLoading(true)
+    const newTask = {
+      _id: Date.now().toString(),
+      title: newTaskTitle,
+      completed: false,
+      priority: 'Medium',
+      category: 'Personal',
+      createdAt: new Date().toISOString()
+    }
+    
+    // Add to UI immediately
+    const updatedTasks = [...tasks, newTask]
+    setTasks(updatedTasks)
+    setNewTaskTitle('')
+    
     try {
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
@@ -40,7 +61,7 @@ const SimpleTaskManager = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          title: newTaskTitle,
+          title: newTask.title,
           completed: false,
           priority: 'Medium',
           category: 'Personal'
@@ -48,12 +69,15 @@ const SimpleTaskManager = () => {
       })
       
       if (response.ok) {
-        const newTask = await response.json()
-        setTasks([...tasks, newTask])
-        setNewTaskTitle('')
+        const serverTask = await response.json()
+        setTasks(tasks.map(t => t._id === newTask._id ? serverTask : t))
+      } else {
+        // Save to localStorage as fallback
+        localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
       }
     } catch (error) {
-      console.error('Add task failed:', error)
+      console.error('Add task failed, using localStorage:', error)
+      localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     }
     setLoading(false)
   }
@@ -62,6 +86,12 @@ const SimpleTaskManager = () => {
     const task = tasks.find(t => t._id === taskId)
     if (!task) return
 
+    // Update UI immediately
+    const updatedTasks = tasks.map(t => 
+      t._id === taskId ? { ...t, completed: !t.completed } : t
+    )
+    setTasks(updatedTasks)
+    
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'PUT',
@@ -74,12 +104,12 @@ const SimpleTaskManager = () => {
         })
       })
       
-      if (response.ok) {
-        const updatedTask = await response.json()
-        setTasks(tasks.map(t => t._id === taskId ? updatedTask : t))
+      if (!response.ok) {
+        localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
       }
     } catch (error) {
-      console.error('Toggle task failed:', error)
+      console.error('Toggle task failed, using localStorage:', error)
+      localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     }
   }
 
