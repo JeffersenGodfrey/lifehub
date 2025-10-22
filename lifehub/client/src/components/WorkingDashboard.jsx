@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import SimpleTaskManager from './SimpleTaskManager'
+import HybridTaskManager from './HybridTaskManager'
 import SimpleHabitManager from './SimpleHabitManager'
 import SimpleWellness from './SimpleWellness'
 import TestConnection from './TestConnection'
@@ -10,7 +10,7 @@ const WorkingDashboard = () => {
 
   const tabs = [
     { id: 'test', label: 'Test API', component: TestConnection },
-    { id: 'tasks', label: 'Tasks', component: SimpleTaskManager },
+    { id: 'tasks', label: 'Tasks', component: HybridTaskManager },
     { id: 'habits', label: 'Habits', component: SimpleHabitManager },
     { id: 'wellness', label: 'Wellness', component: SimpleWellness }
   ]
