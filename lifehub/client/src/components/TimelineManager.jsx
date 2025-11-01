@@ -15,7 +15,6 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
   const handleAddItem = () => {
     if (newItem.time.trim() && newItem.activity.trim()) {
       onTimelineAdd({
-        id: Date.now(),
         time: newItem.time,
         activity: newItem.activity,
         icon: newItem.icon
@@ -100,7 +99,7 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
           </div>
         ) : (
           timeline.map(item => (
-            <div key={item.id} className="timeline-item-card">
+            <div key={item._id || item.id} className="timeline-item-card">
               <div className="timeline-item-main">
                 <div className="timeline-time-badge">{item.time}</div>
                 <div className="timeline-item-content">
@@ -109,7 +108,7 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
                 </div>
                 <button
                   className="delete-timeline-btn"
-                  onClick={() => onTimelineDelete(item.id)}
+                  onClick={() => onTimelineDelete(item._id || item.id)}
                   title="Delete timeline item"
                 >
                   🗑️
