@@ -15,7 +15,7 @@ const SimpleTaskManager = () => {
     try {
       const response = await fetch(`${API_URL}/tasks`, {
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         }
       })
@@ -57,7 +57,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -95,7 +95,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -117,7 +117,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': 'Bearer test-user-123'
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`
         }
       })
       

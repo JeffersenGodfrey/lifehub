@@ -43,6 +43,8 @@ const Dashboard = () => {
           email: firebaseUser.email,
           photoURL: firebaseUser.photoURL
         }
+        // Store Firebase UID for API calls
+        localStorage.setItem('firebase-uid', firebaseUser.uid)
         setUser(userData)
         
         // Simple user profile sync

@@ -7,7 +7,7 @@ const getAuthToken = async () => {
   if (auth.currentUser) {
     return auth.currentUser.uid;
   }
-  return 'dev-user-123'; // Fallback for development
+  return localStorage.getItem('firebase-uid') || 'anonymous';
 };
 
 // Generic API call function

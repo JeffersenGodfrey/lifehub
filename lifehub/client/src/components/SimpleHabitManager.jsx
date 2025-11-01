@@ -15,7 +15,7 @@ const SimpleHabitManager = () => {
     try {
       const response = await fetch(`${API_URL}/habits`, {
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         }
       })
@@ -58,7 +58,7 @@ const SimpleHabitManager = () => {
       const response = await fetch(`${API_URL}/habits`, {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -93,7 +93,7 @@ const SimpleHabitManager = () => {
       const response = await fetch(`${API_URL}/habits/${habitId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': 'Bearer test-user-123',
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -115,7 +115,7 @@ const SimpleHabitManager = () => {
       const response = await fetch(`${API_URL}/habits/${habitId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': 'Bearer test-user-123'
+          'Authorization': `Bearer ${localStorage.getItem('firebase-uid') || 'anonymous'}`
         }
       })
       
