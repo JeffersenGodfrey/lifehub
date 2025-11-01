@@ -17,10 +17,12 @@ function Login() {
     if (user) {
       navigate("/dashboard");
     } else {
-      if (authError.includes('user-not-found') || authError.includes('invalid-email')) {
+      if (authError.includes('user-not-found')) {
+        setError('No account found with this email. Please sign up first.');
+      } else if (authError.includes('invalid-email')) {
         setError('Invalid email address');
       } else if (authError.includes('wrong-password') || authError.includes('invalid-credential')) {
-        setError('Invalid password');
+        setError('Invalid password. If you signed up with Google, please use "Continue with Google".');
       } else {
         setError('Invalid email or password');
       }

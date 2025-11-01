@@ -14,12 +14,16 @@ function Register() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const { user, error: authError } = await signupWithEmail(email, password, username);
+    const { user, error: authError, message } = await signupWithEmail(email, password, username);
     if (user) {
+      if (message) {
+        // Show success message for account linking
+        alert(message);
+      }
       navigate("/dashboard");
     } else {
-      if (authError.includes('email-already-in-use')) {
-        setError('Email address is already registered');
+      if (authError.includes('Google')) {
+        setError(authError);
       } else if (authError.includes('weak-password')) {
         setError('Password should be at least 6 characters');
       } else if (authError.includes('invalid-email')) {

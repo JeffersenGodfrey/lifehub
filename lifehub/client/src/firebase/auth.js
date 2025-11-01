@@ -14,6 +14,8 @@ import { auth } from './config'
 export const loginWithEmail = async (email, password) => {
   try {
     const result = await signInWithEmailAndPassword(auth, email, password)
+    // Store Firebase UID for API calls
+    localStorage.setItem('firebase-uid', result.user.uid)
     return { user: result.user, error: null }
   } catch (error) {
     return { user: null, error: error.message }
@@ -26,8 +28,29 @@ export const signupWithEmail = async (email, password, displayName) => {
     if (displayName) {
       await updateProfile(result.user, { displayName })
     }
+    // Store Firebase UID for API calls
+    localStorage.setItem('firebase-uid', result.user.uid)
     return { user: result.user, error: null }
   } catch (error) {
+    // If email already exists, try to sign in instead
+    if (error.code === 'auth/email-already-in-use') {
+      try {
+        const loginResult = await signInWithEmailAndPassword(auth, email, password)
+        // Store Firebase UID for API calls
+        localStorage.setItem('firebase-uid', loginResult.user.uid)
+        return { 
+          user: loginResult.user, 
+          error: null,
+          message: 'Account already exists. Signed you in instead.'
+        }
+      } catch (loginError) {
+        // If password doesn't work, it means they signed up with Google
+        return { 
+          user: null, 
+          error: 'This email is already registered with Google. Please use "Continue with Google" to sign in.'
+        }
+      }
+    }
     return { user: null, error: error.message }
   }
 }
@@ -41,6 +64,8 @@ export const loginWithGoogle = async () => {
     })
     
     const result = await signInWithPopup(auth, provider)
+    // Store Firebase UID for API calls
+    localStorage.setItem('firebase-uid', result.user.uid)
     return { user: result.user, error: null }
   } catch (error) {
     console.error('Google login error:', error)
@@ -74,6 +99,8 @@ export const resetPassword = async (email) => {
 export const logout = async () => {
   try {
     await signOut(auth)
+    // Clear Firebase UID from localStorage
+    localStorage.removeItem('firebase-uid')
     return { success: true, error: null }
   } catch (error) {
     return { success: false, error: error.message }
