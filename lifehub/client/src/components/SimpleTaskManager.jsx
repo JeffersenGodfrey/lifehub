@@ -6,7 +6,7 @@ const SimpleTaskManager = () => {
   const [loading, setLoading] = useState(false)
 
   const API_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://lifehub-backend.onrender.com/api'
+    ? 'https://lifehub-wjir.onrender.com/api'
     : 'http://localhost:5000/api'
 
   useEffect(() => {

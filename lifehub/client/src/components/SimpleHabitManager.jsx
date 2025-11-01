@@ -5,7 +5,9 @@ const SimpleHabitManager = () => {
   const [newHabitName, setNewHabitName] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const API_URL = 'https://lifehub-backend.onrender.com/api'
+  const API_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://lifehub-wjir.onrender.com/api'
+    : 'http://localhost:5000/api'
 
   useEffect(() => {
     loadHabits()
