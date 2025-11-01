@@ -13,11 +13,17 @@ dotenv.config();
 
 const app = express();
 
-// Middleware - Allow all origins for now
+// Middleware - Proper CORS configuration
 app.use(cors({
-  origin: true,
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://lifehub-task.vercel.app',
+    'https://lifehub-task-iwcoyfws1-jeffersen-godfreys-projects.vercel.app',
+    /\.vercel\.app$/
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: false
 }));
 

@@ -27,7 +27,9 @@ const SimpleTaskManager = () => {
         return
       }
     } catch (error) {
-      console.error('Load tasks failed, using localStorage:', error)
+      console.error('Load tasks failed:', error.name, error.message)
+      console.error('Fetch URL:', `${API_URL}/tasks`)
+      console.error('Full error:', error)
     }
     
     // Fallback to localStorage
@@ -86,7 +88,8 @@ const SimpleTaskManager = () => {
       }
     } catch (error) {
       console.error('Add task failed:', error.name, error.message)
-      console.error('API URL:', API_URL)
+      console.error('Fetch URL:', `${API_URL}/tasks`)
+      console.error('Full error:', error)
       alert(`Failed to create task: ${error.message}`)
       localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     }
@@ -119,7 +122,8 @@ const SimpleTaskManager = () => {
         localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
       }
     } catch (error) {
-      console.error('Toggle task failed, using localStorage:', error)
+      console.error('Toggle task failed:', error.name, error.message)
+      console.error('Fetch URL:', `${API_URL}/tasks/${taskId}`)
       localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     }
   }
@@ -137,7 +141,8 @@ const SimpleTaskManager = () => {
         setTasks(tasks.filter(t => t._id !== taskId))
       }
     } catch (error) {
-      console.error('Delete task failed:', error)
+      console.error('Delete task failed:', error.name, error.message)
+      console.error('Fetch URL:', `${API_URL}/tasks/${taskId}`)
     }
   }
 
