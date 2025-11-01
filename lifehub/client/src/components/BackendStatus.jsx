@@ -9,11 +9,11 @@ const BackendStatus = () => {
   }, [])
 
   const checkBackendStatus = async () => {
-    const API_BASE_URL = 'https://lifehub-backend.onrender.com/api'
+    const API_BASE_URL = 'https://lifehub-wjir.onrender.com/api'
     setApiUrl(API_BASE_URL)
     
     try {
-      const response = await fetch('https://lifehub-backend.onrender.com/')
+      const response = await fetch('https://lifehub-wjir.onrender.com/')
       if (response.ok) {
         const text = await response.text()
         if (text.includes('LifeHub API is running')) {

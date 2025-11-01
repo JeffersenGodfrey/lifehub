@@ -1,6 +1,6 @@
 import { auth } from '../firebase/config';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://lifehub-wjir.onrender.com/api';
 
 // Get current user token
 const getAuthToken = async () => {

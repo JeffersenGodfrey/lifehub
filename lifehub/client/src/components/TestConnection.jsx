@@ -6,13 +6,11 @@ const TestConnection = () => {
   const testAPI = async () => {
     setResult('Testing...')
     
-    const API_URL = process.env.NODE_ENV === 'production' 
-      ? 'https://lifehub-be7p.onrender.com/api'
-      : 'http://localhost:5000/api'
+    const API_URL = 'https://lifehub-wjir.onrender.com/api'
     
     try {
       // Test base URL first
-      const baseResponse = await fetch('https://lifehub-be7p.onrender.com/')
+      const baseResponse = await fetch('https://lifehub-wjir.onrender.com/')
       const baseText = await baseResponse.text()
       
       // Test API endpoint

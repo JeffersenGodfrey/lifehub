@@ -47,7 +47,7 @@ const Dashboard = () => {
         
         // Simple user profile sync
         setTimeout(() => {
-          fetch(`${import.meta.env.VITE_API_URL || 'https://lifehub-be7p.onrender.com/api'}/users/profile`, {
+          fetch(`${import.meta.env.VITE_API_URL || 'https://lifehub-wjir.onrender.com/api'}/users/profile`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
