@@ -23,8 +23,20 @@ app.use(cors({
 app.use(express.json());
 // Test routes without auth
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'API working', timestamp: new Date() })
+  res.json({ 
+    message: 'API working', 
+    timestamp: new Date(),
+    dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  })
 })
+
+// Middleware to check DB connection
+app.use('/api', (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ error: 'Database not connected' });
+  }
+  next();
+});
 
 app.use("/api/tasks", taskRoutes);
 app.use("/api/wellness", wellnessRoutes);

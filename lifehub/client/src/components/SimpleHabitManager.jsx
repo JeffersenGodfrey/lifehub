@@ -66,8 +66,10 @@ const SimpleHabitManager = () => {
       
       if (response.ok) {
         const serverHabit = await response.json()
-        setHabits(habits.map(h => h._id === newHabit._id ? serverHabit : h))
+        setHabits(prevHabits => prevHabits.map(h => h._id === newHabit._id ? serverHabit : h))
       } else {
+        const errorText = await response.text()
+        console.error('Server error:', response.status, errorText)
         localStorage.setItem('lifehub_habits', JSON.stringify(updatedHabits))
       }
     } catch (error) {

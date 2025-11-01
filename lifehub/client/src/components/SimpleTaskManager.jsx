@@ -70,9 +70,10 @@ const SimpleTaskManager = () => {
       
       if (response.ok) {
         const serverTask = await response.json()
-        setTasks(tasks.map(t => t._id === newTask._id ? serverTask : t))
+        setTasks(prevTasks => prevTasks.map(t => t._id === newTask._id ? serverTask : t))
       } else {
-        // Save to localStorage as fallback
+        const errorText = await response.text()
+        console.error('Server error:', response.status, errorText)
         localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
       }
     } catch (error) {
