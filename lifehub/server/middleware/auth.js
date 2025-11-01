@@ -2,8 +2,7 @@
 // In production, you would verify Firebase tokens here
 const authMiddleware = (req, res, next) => {
   // Temporarily disable auth for testing
-  req.userId = 'dev-user-123';
-  console.log('Auth bypassed - userId:', req.userId);
+  req.userId = 'test-user-123';
   next();
 };
 

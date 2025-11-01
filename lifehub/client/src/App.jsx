@@ -5,6 +5,7 @@ import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import WorkingDashboard from './components/WorkingDashboard'
 import PublicDemo from './components/PublicDemo'
+import BackendWakeup from './components/BackendWakeup'
 import './styles/Auth.css'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/working" element={<WorkingDashboard />} />
         <Route path="/demo" element={<PublicDemo />} />
+        <Route path="/wakeup" element={<BackendWakeup />} />
       </Routes>
     </Router>
   )

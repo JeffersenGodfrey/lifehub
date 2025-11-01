@@ -15,7 +15,7 @@ const SimpleTaskManager = () => {
     try {
       const response = await fetch(`${API_URL}/tasks`, {
         headers: {
-          'Authorization': 'Bearer dev-user-123',
+          'Authorization': 'Bearer test-user-123',
           'Content-Type': 'application/json'
         }
       })
@@ -60,7 +60,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer dev-user-123',
+          'Authorization': 'Bearer test-user-123',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -103,7 +103,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': 'Bearer dev-user-123',
+          'Authorization': 'Bearer test-user-123',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -125,7 +125,7 @@ const SimpleTaskManager = () => {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': 'Bearer dev-user-123'
+          'Authorization': 'Bearer test-user-123'
         }
       })
       

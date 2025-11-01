@@ -33,13 +33,7 @@ app.get('/api/test', (req, res) => {
   })
 })
 
-// Middleware to check DB connection for data routes only
-app.use('/api/(tasks|habits|wellness|users|timeline|focus)', (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ error: 'Database not connected' });
-  }
-  next();
-});
+
 
 app.use("/api/tasks", taskRoutes);
 app.use("/api/wellness", wellnessRoutes);
