@@ -14,25 +14,7 @@ const SimpleTaskManager = () => {
   }, [])
 
   const loadTasks = async () => {
-    try {
-      const response = await fetch(`${API_URL}/tasks`, {
-        headers: {
-          'Authorization': 'Bearer test-user-123',
-          'Content-Type': 'application/json'
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setTasks(data)
-        return
-      }
-    } catch (error) {
-      console.error('Load tasks failed:', error.name, error.message)
-      console.error('Fetch URL:', `${API_URL}/tasks`)
-      console.error('Full error:', error)
-    }
-    
-    // Fallback to localStorage
+    // Load from localStorage (offline mode)
     const savedTasks = localStorage.getItem('lifehub_tasks')
     if (savedTasks) {
       setTasks(JSON.parse(savedTasks))
@@ -52,47 +34,11 @@ const SimpleTaskManager = () => {
       createdAt: new Date().toISOString()
     }
     
-    // Add to UI immediately
+    // Add to UI and save to localStorage
     const updatedTasks = [...tasks, newTask]
     setTasks(updatedTasks)
+    localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     setNewTaskTitle('')
-    
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 10000)
-      
-      const response = await fetch(`${API_URL}/tasks`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer test-user-123',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: newTask.title,
-          completed: false,
-          priority: 'Medium',
-          category: 'Personal'
-        }),
-        signal: controller.signal
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (response.ok) {
-        const serverTask = await response.json()
-        setTasks(prevTasks => prevTasks.map(t => t._id === newTask._id ? serverTask : t))
-      } else {
-        const errorText = await response.text()
-        console.error('Server error:', response.status, errorText)
-        localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
-      }
-    } catch (error) {
-      console.error('Add task failed:', error.name, error.message)
-      console.error('Fetch URL:', `${API_URL}/tasks`)
-      console.error('Full error:', error)
-      alert(`Failed to create task: ${error.message}`)
-      localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
-    }
     setLoading(false)
   }
 
@@ -100,50 +46,19 @@ const SimpleTaskManager = () => {
     const task = tasks.find(t => t._id === taskId)
     if (!task) return
 
-    // Update UI immediately
+    // Update UI and save to localStorage
     const updatedTasks = tasks.map(t => 
       t._id === taskId ? { ...t, completed: !t.completed } : t
     )
     setTasks(updatedTasks)
-    
-    try {
-      const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'Bearer test-user-123',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          completed: !task.completed
-        })
-      })
-      
-      if (!response.ok) {
-        localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
-      }
-    } catch (error) {
-      console.error('Toggle task failed:', error.name, error.message)
-      console.error('Fetch URL:', `${API_URL}/tasks/${taskId}`)
-      localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
-    }
+    localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
   }
 
   const deleteTask = async (taskId) => {
-    try {
-      const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer test-user-123'
-        }
-      })
-      
-      if (response.ok) {
-        setTasks(tasks.filter(t => t._id !== taskId))
-      }
-    } catch (error) {
-      console.error('Delete task failed:', error.name, error.message)
-      console.error('Fetch URL:', `${API_URL}/tasks/${taskId}`)
-    }
+    // Update UI and save to localStorage
+    const updatedTasks = tasks.filter(t => t._id !== taskId)
+    setTasks(updatedTasks)
+    localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
   }
 
   return (
