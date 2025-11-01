@@ -54,6 +54,9 @@ const SimpleTaskManager = () => {
     setNewTaskTitle('')
     
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: {
@@ -65,8 +68,11 @@ const SimpleTaskManager = () => {
           completed: false,
           priority: 'Medium',
           category: 'Personal'
-        })
+        }),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
       
       if (response.ok) {
         const serverTask = await response.json()

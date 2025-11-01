@@ -13,13 +13,16 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// Middleware - Allow all origins for now
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://lifehub-task-iwcoyfws1-jeffersen-godfreys-projects.vercel.app', 'https://lifehub-task.vercel.app'],
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: false
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 app.use(express.json());
 // Test routes without auth
 app.get('/api/test', (req, res) => {
@@ -30,8 +33,8 @@ app.get('/api/test', (req, res) => {
   })
 })
 
-// Middleware to check DB connection
-app.use('/api', (req, res, next) => {
+// Middleware to check DB connection for data routes only
+app.use('/api/(tasks|habits|wellness|users|timeline|focus)', (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({ error: 'Database not connected' });
   }

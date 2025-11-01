@@ -52,6 +52,9 @@ const SimpleHabitManager = () => {
     setNewHabitName('')
     
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+      
       const response = await fetch(`${API_URL}/habits`, {
         method: 'POST',
         headers: {
@@ -61,8 +64,11 @@ const SimpleHabitManager = () => {
         body: JSON.stringify({
           name: newHabit.name,
           completed: false
-        })
+        }),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
       
       if (response.ok) {
         const serverHabit = await response.json()
