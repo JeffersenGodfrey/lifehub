@@ -4,6 +4,8 @@ import '../styles/timeline-manager.css'
 const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimelineDelete }) => {
   const [isAddingItem, setIsAddingItem] = useState(false)
   const [newItem, setNewItem] = useState({ time: '', activity: '', icon: '📝' })
+  const [editingId, setEditingId] = useState(null)
+  const [editItem, setEditItem] = useState({ time: '', activity: '', icon: '📝' })
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -22,6 +24,33 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
       setNewItem({ time: '', activity: '', icon: '📝' })
       setIsAddingItem(false)
     }
+  }
+
+  const startEdit = (item) => {
+    setEditingId(item._id || item.id)
+    setEditItem({
+      time: item.time,
+      activity: item.activity,
+      icon: item.icon
+    })
+  }
+
+  const handleUpdateItem = () => {
+    if (editItem.time.trim() && editItem.activity.trim()) {
+      onTimelineUpdate({
+        _id: editingId,
+        time: editItem.time,
+        activity: editItem.activity,
+        icon: editItem.icon
+      })
+      setEditingId(null)
+      setEditItem({ time: '', activity: '', icon: '📝' })
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditItem({ time: '', activity: '', icon: '📝' })
   }
 
   const iconOptions = ['📝', '🏋️', '💻', '🍽️', '📚', '🚗', '🛒', '👥', '🎯', '💤']
@@ -98,24 +127,73 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
             <p>Add your first timeline item to get started!</p>
           </div>
         ) : (
-          timeline.map(item => (
-            <div key={item._id || item.id} className="timeline-item-card">
-              <div className="timeline-item-main">
-                <div className="timeline-time-badge">{item.time}</div>
-                <div className="timeline-item-content">
-                  <span className="timeline-item-icon">{item.icon}</span>
-                  <span className="timeline-item-activity">{item.activity}</span>
-                </div>
-                <button
-                  className="delete-timeline-btn"
-                  onClick={() => onTimelineDelete(item._id || item.id)}
-                  title="Delete timeline item"
-                >
-                  🗑️
-                </button>
+          timeline.map(item => {
+            const isEditing = editingId === (item._id || item.id)
+            return (
+              <div key={item._id || item.id} className="timeline-item-card">
+                {isEditing ? (
+                  <div className="edit-timeline-form">
+                    <div className="form-row">
+                      <input
+                        type="time"
+                        value={editItem.time}
+                        onChange={(e) => setEditItem({...editItem, time: e.target.value})}
+                        className="time-input"
+                      />
+                      <input
+                        type="text"
+                        value={editItem.activity}
+                        onChange={(e) => setEditItem({...editItem, activity: e.target.value})}
+                        className="activity-input"
+                        onKeyPress={(e) => e.key === 'Enter' && handleUpdateItem()}
+                      />
+                      <select
+                        value={editItem.icon}
+                        onChange={(e) => setEditItem({...editItem, icon: e.target.value})}
+                        className="icon-select"
+                      >
+                        {iconOptions.map(icon => (
+                          <option key={icon} value={icon}>{icon}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-actions">
+                      <button onClick={handleUpdateItem} className="save-btn">
+                        ✓ Save
+                      </button>
+                      <button onClick={cancelEdit} className="cancel-btn">
+                        ✕ Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="timeline-item-main">
+                    <div className="timeline-time-badge">{item.time}</div>
+                    <div className="timeline-item-content">
+                      <span className="timeline-item-icon">{item.icon}</span>
+                      <span className="timeline-item-activity">{item.activity}</span>
+                    </div>
+                    <div className="timeline-item-actions">
+                      <button
+                        className="edit-timeline-btn"
+                        onClick={() => startEdit(item)}
+                        title="Edit timeline item"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="delete-timeline-btn"
+                        onClick={() => onTimelineDelete(item._id || item.id)}
+                        title="Delete timeline item"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))
+            )
+          })
         )}
       </div>
     </div>

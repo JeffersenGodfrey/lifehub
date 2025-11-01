@@ -274,3 +274,30 @@
   margin-bottom: 16px;
   text-align: center;
 }
+
+.edit-timeline-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.timeline-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.edit-timeline-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+}
+
+.edit-timeline-btn:hover {
+  background: rgba(75, 157, 234, 0.1);
+  opacity: 1;
+}
