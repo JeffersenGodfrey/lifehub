@@ -91,10 +91,10 @@ const Dashboard = () => {
         focusAPI.getFocusStats().catch(() => ({ sessions: 0 }))
       ])
       setTimeline(timelineData.length > 0 ? timelineData : [
-        { time: '7:00 AM', activity: 'Morning Workout', icon: '🏋️' },
-        { time: '9:00 AM', activity: 'Work Session', icon: '💻' },
-        { time: '12:00 PM', activity: 'Lunch Break', icon: '🍽️' },
-        { time: '3:00 PM', activity: 'Complete Tasks', icon: '📝' }
+        { id: 'default-1', time: '7:00 AM', activity: 'Morning Workout', icon: '🏋️' },
+        { id: 'default-2', time: '9:00 AM', activity: 'Work Session', icon: '💻' },
+        { id: 'default-3', time: '12:00 PM', activity: 'Lunch Break', icon: '🍽️' },
+        { id: 'default-4', time: '3:00 PM', activity: 'Complete Tasks', icon: '📝' }
       ])
       setFocusTimer(prev => ({ ...prev, sessions: focusData.sessions || 0 }))
     } catch (error) {
@@ -134,7 +134,7 @@ const Dashboard = () => {
   const deleteTimelineItem = async (id) => {
     try {
       await timelineAPI.deleteTimelineItem(id)
-      setTimeline(timeline.filter(item => item._id !== id))
+      setTimeline(timeline.filter(item => (item._id || item.id) !== id))
     } catch (error) {
       console.error('Failed to delete timeline item:', error)
     }
