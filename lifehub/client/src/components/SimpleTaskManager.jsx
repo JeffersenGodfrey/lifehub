@@ -5,7 +5,9 @@ const SimpleTaskManager = () => {
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const API_URL = 'https://lifehub-be7p.onrender.com/api'
+  const API_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://lifehub-be7p.onrender.com/api'
+    : 'http://localhost:5000/api'
 
   useEffect(() => {
     loadTasks()
@@ -83,7 +85,9 @@ const SimpleTaskManager = () => {
         localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
       }
     } catch (error) {
-      console.error('Add task failed, using localStorage:', error)
+      console.error('Add task failed:', error.name, error.message)
+      console.error('API URL:', API_URL)
+      alert(`Failed to create task: ${error.message}`)
       localStorage.setItem('lifehub_tasks', JSON.stringify(updatedTasks))
     }
     setLoading(false)

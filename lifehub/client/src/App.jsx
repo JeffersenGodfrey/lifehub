@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard'
 import WorkingDashboard from './components/WorkingDashboard'
 import PublicDemo from './components/PublicDemo'
 import BackendWakeup from './components/BackendWakeup'
+import TestConnection from './components/TestConnection'
 import './styles/Auth.css'
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/working" element={<WorkingDashboard />} />
         <Route path="/demo" element={<PublicDemo />} />
         <Route path="/wakeup" element={<BackendWakeup />} />
+        <Route path="/test" element={<TestConnection />} />
       </Routes>
     </Router>
   )
