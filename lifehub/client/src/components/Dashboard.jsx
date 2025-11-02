@@ -126,19 +126,51 @@ const Dashboard = () => {
     }
   }
   const updateTimelineItem = async (updatedItem) => {
-    try {
-      const updated = await timelineAPI.updateTimelineItem(updatedItem._id, updatedItem)
-      setTimeline(timeline.map(item => item._id === updatedItem._id ? updated : item))
-    } catch (error) {
-      console.error('Failed to update timeline item:', error)
+    const itemId = updatedItem._id || updatedItem.id
+    
+    // If it's a default item (has 'id' but no '_id'), convert it to a database item
+    if (updatedItem.id && !updatedItem._id) {
+      try {
+        // Create new item in database
+        const newItem = await timelineAPI.createTimelineItem({
+          time: updatedItem.time,
+          activity: updatedItem.activity,
+          icon: updatedItem.icon
+        })
+        // Remove old default item and add new database item
+        setTimeline(timeline.map(item => 
+          (item.id || item._id) === itemId ? newItem : item
+        ))
+      } catch (error) {
+        console.error('Failed to create timeline item:', error)
+      }
+    } else {
+      // Update existing database item
+      try {
+        const updated = await timelineAPI.updateTimelineItem(updatedItem._id, updatedItem)
+        setTimeline(timeline.map(item => 
+          (item._id || item.id) === itemId ? updated : item
+        ))
+      } catch (error) {
+        console.error('Failed to update timeline item:', error)
+      }
     }
   }
   const deleteTimelineItem = async (id) => {
-    try {
-      await timelineAPI.deleteTimelineItem(id)
+    // Check if it's a default item (has 'id' but no '_id')
+    const item = timeline.find(item => (item._id || item.id) === id)
+    
+    if (item && item.id && !item._id) {
+      // It's a default item, just remove from frontend state
       setTimeline(timeline.filter(item => (item._id || item.id) !== id))
-    } catch (error) {
-      console.error('Failed to delete timeline item:', error)
+    } else {
+      // It's a database item, delete from backend
+      try {
+        await timelineAPI.deleteTimelineItem(id)
+        setTimeline(timeline.filter(item => (item._id || item.id) !== id))
+      } catch (error) {
+        console.error('Failed to delete timeline item:', error)
+      }
     }
   }
 
