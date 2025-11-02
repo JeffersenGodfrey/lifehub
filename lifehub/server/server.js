@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import habitRoutes from "./routes/habitRoutes.js";
 import timelineRoutes from "./routes/timelineRoutes.js";
 import focusRoutes from "./routes/focusRoutes.js";
+import { startOverdueTaskChecker, startTaskReminderChecker } from "./services/cronService.js";
 
 dotenv.config();
 
@@ -55,7 +56,12 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("✅ MongoDB Connected"))
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+    // Start cron services after DB connection
+    startOverdueTaskChecker();
+    startTaskReminderChecker();
+  })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err.message);
     process.exit(1);

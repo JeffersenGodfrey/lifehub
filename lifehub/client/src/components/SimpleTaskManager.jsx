@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 const SimpleTaskManager = () => {
   const [tasks, setTasks] = useState([])
   const [newTaskTitle, setNewTaskTitle] = useState('')
+  const [newTaskDeadline, setNewTaskDeadline] = useState('')
   const [loading, setLoading] = useState(false)
 
   const API_URL = 'https://lifehub-wjir.onrender.com/api'
@@ -52,6 +53,7 @@ const SimpleTaskManager = () => {
     const updatedTasks = [...tasks, newTask]
     setTasks(updatedTasks)
     setNewTaskTitle('')
+    setNewTaskDeadline('')
     
     try {
       const response = await fetch(`${API_URL}/tasks`, {
@@ -64,7 +66,8 @@ const SimpleTaskManager = () => {
           title: newTask.title,
           completed: false,
           priority: 'Medium',
-          category: 'Personal'
+          category: 'Personal',
+          dueDate: newTaskDeadline || null
         })
       })
       
@@ -133,34 +136,48 @@ const SimpleTaskManager = () => {
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Task Manager</h2>
       
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-        <input
-          type="text"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Enter task title..."
-          style={{
-            flex: 1,
-            padding: '10px',
-            border: '1px solid #ddd',
-            borderRadius: '4px'
-          }}
-          onKeyPress={(e) => e.key === 'Enter' && addTask()}
-        />
-        <button
-          onClick={addTask}
-          disabled={loading || !newTaskTitle.trim()}
-          style={{
-            padding: '10px 20px',
-            background: '#4B9DEA',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          {loading ? 'Adding...' : 'Add Task'}
-        </button>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+          <input
+            type="text"
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            placeholder="Enter task title..."
+            style={{
+              flex: 1,
+              padding: '10px',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}
+            onKeyPress={(e) => e.key === 'Enter' && addTask()}
+          />
+          <input
+            type="datetime-local"
+            value={newTaskDeadline}
+            onChange={(e) => setNewTaskDeadline(e.target.value)}
+            style={{
+              padding: '10px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              minWidth: '200px'
+            }}
+            title="Set deadline (optional)"
+          />
+          <button
+            onClick={addTask}
+            disabled={loading || !newTaskTitle.trim()}
+            style={{
+              padding: '10px 20px',
+              background: '#4B9DEA',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            {loading ? 'Adding...' : 'Add Task'}
+          </button>
+        </div>
       </div>
 
       <div>
@@ -187,15 +204,28 @@ const SimpleTaskManager = () => {
                 onChange={() => toggleTask(task._id)}
                 style={{ cursor: 'pointer' }}
               />
-              <span
-                style={{
-                  flex: 1,
-                  textDecoration: task.completed ? 'line-through' : 'none',
-                  color: task.completed ? '#666' : 'black'
-                }}
-              >
-                {task.title}
-              </span>
+              <div style={{ flex: 1 }}>
+                <span
+                  style={{
+                    textDecoration: task.completed ? 'line-through' : 'none',
+                    color: task.completed ? '#666' : 'black',
+                    display: 'block'
+                  }}
+                >
+                  {task.title}
+                </span>
+                {task.dueDate && (
+                  <small
+                    style={{
+                      color: new Date(task.dueDate) < new Date() && !task.completed ? '#ff4757' : '#666',
+                      fontWeight: new Date(task.dueDate) < new Date() && !task.completed ? 'bold' : 'normal'
+                    }}
+                  >
+                    📅 Due: {new Date(task.dueDate).toLocaleString()}
+                    {new Date(task.dueDate) < new Date() && !task.completed && ' (OVERDUE)'}
+                  </small>
+                )}
+              </div>
               <button
                 onClick={() => deleteTask(task._id)}
                 style={{

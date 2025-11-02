@@ -183,7 +183,7 @@
   box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
 }
 
-.priority-select, .category-select {
+.priority-select, .category-select, .deadline-input {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
@@ -193,6 +193,27 @@
   outline: none;
   cursor: pointer;
   flex: 1;
+}
+
+.deadline-input {
+  cursor: text;
+}
+
+.deadline-input:focus {
+  border-color: #4B9DEA;
+  box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
+}
+
+.task-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-deadline {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .form-actions {

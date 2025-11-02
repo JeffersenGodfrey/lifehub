@@ -9,6 +9,8 @@ const taskSchema = new mongoose.Schema(
     dueDate: { type: Date },
     priority: { type: String, enum: ["Low", "Medium", "High"], default: "Low" },
     category: { type: String },
+    lastNotified: { type: Date }, // Last time overdue notification was sent
+    reminderSent: { type: Boolean, default: false }, // Whether 24h reminder was sent
   },
   { timestamps: true }
 );

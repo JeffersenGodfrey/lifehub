@@ -6,7 +6,7 @@ const TaskDashboard = () => {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [isAddingTask, setIsAddingTask] = useState(false)
-  const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', category: 'Personal' })
+  const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', category: 'Personal', dueDate: '' })
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const inputRef = useRef(null)
@@ -48,11 +48,12 @@ const TaskDashboard = () => {
           title: newTask.title,
           priority: newTask.priority,
           category: newTask.category,
-          completed: false
+          completed: false,
+          dueDate: newTask.dueDate || null
         }
         const createdTask = await taskAPI.createTask(taskData)
         setTasks([...tasks, createdTask])
-        setNewTask({ title: '', priority: 'Medium', category: 'Personal' })
+        setNewTask({ title: '', priority: 'Medium', category: 'Personal', dueDate: '' })
         setIsAddingTask(false)
       } catch (error) {
         console.error('Failed to add task:', error)
@@ -212,6 +213,13 @@ const TaskDashboard = () => {
                   <option value="Health">Health</option>
                   <option value="Learning">Learning</option>
                 </select>
+                <input
+                  type="datetime-local"
+                  value={newTask.dueDate}
+                  onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
+                  className="deadline-input"
+                  title="Set deadline (optional)"
+                />
               </div>
               <div className="form-actions">
                 <button onClick={handleAddTask} className="save-btn">
@@ -220,7 +228,7 @@ const TaskDashboard = () => {
                 <button 
                   onClick={() => {
                     setIsAddingTask(false)
-                    setNewTask({ title: '', priority: 'Medium', category: 'Personal' })
+                    setNewTask({ title: '', priority: 'Medium', category: 'Personal', dueDate: '' })
                   }} 
                   className="cancel-btn"
                 >
@@ -277,9 +285,23 @@ const TaskDashboard = () => {
                     </div>
                     
                     <div className="task-footer">
-                      <span className="task-date">
-                        {new Date(task.createdAt || task.updatedAt || Date.now()).toLocaleDateString()}
-                      </span>
+                      <div className="task-dates">
+                        <span className="task-date">
+                          Created: {new Date(task.createdAt || task.updatedAt || Date.now()).toLocaleDateString()}
+                        </span>
+                        {task.dueDate && (
+                          <span 
+                            className="task-deadline"
+                            style={{
+                              color: new Date(task.dueDate) < new Date() && !task.completed ? '#ff4757' : '#666',
+                              fontWeight: new Date(task.dueDate) < new Date() && !task.completed ? 'bold' : 'normal'
+                            }}
+                          >
+                            📅 Due: {new Date(task.dueDate).toLocaleString()}
+                            {new Date(task.dueDate) < new Date() && !task.completed && ' (OVERDUE)'}
+                          </span>
+                        )}
+                      </div>
                       <button
                         className="delete-btn"
                         onClick={() => handleTaskDelete(task._id)}
