@@ -399,7 +399,13 @@
   color: #64748b;
 }
 
-.delete-btn {
+.task-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.edit-btn, .delete-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -407,11 +413,24 @@
   border-radius: 6px;
   transition: all 0.3s ease;
   opacity: 0.6;
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  background: rgba(75, 157, 234, 0.1);
+  opacity: 1;
 }
 
 .delete-btn:hover {
   background: rgba(255, 138, 101, 0.1);
   opacity: 1;
+}
+
+.edit-task-section {
+  margin-bottom: 16px;
+  border: 2px solid #4B9DEA;
+  border-radius: 12px;
+  padding: 4px;
 }
 
 .empty-state {

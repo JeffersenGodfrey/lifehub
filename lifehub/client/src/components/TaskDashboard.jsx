@@ -11,6 +11,7 @@ const TaskDashboard = () => {
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, taskId: null })
+  const [editingTask, setEditingTask] = useState(null)
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -51,7 +52,7 @@ const TaskDashboard = () => {
           priority: newTask.priority,
           category: newTask.category,
           completed: false,
-          dueDate: newTask.dueDate || null
+          dueDate: newTask.dueDate ? new Date(newTask.dueDate).toISOString() : null
         }
         const createdTask = await taskAPI.createTask(taskData)
         setTasks([...tasks, createdTask])
@@ -59,14 +60,35 @@ const TaskDashboard = () => {
         setIsAddingTask(false)
       } catch (error) {
         console.error('Failed to add task:', error)
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        })
         alert(`Failed to create task: ${error.message}`)
       }
     }
+  }
+
+  const handleEditTask = async () => {
+    if (editingTask.title.trim()) {
+      try {
+        const taskData = {
+          title: editingTask.title,
+          priority: editingTask.priority,
+          category: editingTask.category,
+          dueDate: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString() : null
+        }
+        const updatedTask = await taskAPI.updateTask(editingTask._id, taskData)
+        setTasks(tasks.map(t => t._id === editingTask._id ? updatedTask : t))
+        setEditingTask(null)
+      } catch (error) {
+        console.error('Failed to update task:', error)
+        alert(`Failed to update task: ${error.message}`)
+      }
+    }
+  }
+
+  const startEditTask = (task) => {
+    setEditingTask({
+      ...task,
+      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : ''
+    })
   }
 
   const handleTaskToggle = async (taskId) => {
@@ -250,6 +272,64 @@ const TaskDashboard = () => {
           )}
         </div>
 
+        {/* Edit Task Form */}
+        {editingTask && (
+          <div className="edit-task-section">
+            <div className="add-task-form">
+              <h4>Edit Task</h4>
+              <div className="form-row">
+                <input
+                  type="text"
+                  placeholder="Enter task title..."
+                  value={editingTask.title}
+                  onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
+                  className="task-input"
+                  onKeyPress={(e) => e.key === 'Enter' && handleEditTask()}
+                />
+              </div>
+              <div className="form-row">
+                <select
+                  value={editingTask.priority}
+                  onChange={(e) => setEditingTask({...editingTask, priority: e.target.value})}
+                  className="priority-select"
+                >
+                  <option value="High">High Priority</option>
+                  <option value="Medium">Medium Priority</option>
+                  <option value="Low">Low Priority</option>
+                </select>
+                <select
+                  value={editingTask.category}
+                  onChange={(e) => setEditingTask({...editingTask, category: e.target.value})}
+                  className="category-select"
+                >
+                  <option value="Personal">Personal</option>
+                  <option value="Work">Work</option>
+                  <option value="Health">Health</option>
+                  <option value="Learning">Learning</option>
+                </select>
+                <input
+                  type="datetime-local"
+                  value={editingTask.dueDate}
+                  onChange={(e) => setEditingTask({...editingTask, dueDate: e.target.value})}
+                  className="deadline-input"
+                  title="Set deadline (optional)"
+                />
+              </div>
+              <div className="form-actions">
+                <button onClick={handleEditTask} className="save-btn">
+                  ✓ Update Task
+                </button>
+                <button 
+                  onClick={() => setEditingTask(null)} 
+                  className="cancel-btn"
+                >
+                  ✕ Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tasks List */}
         <div className="tasks-list">
           {loading ? (
@@ -313,13 +393,22 @@ const TaskDashboard = () => {
                           </span>
                         )}
                       </div>
-                      <button
-                        className="delete-btn"
-                        onClick={() => openDeleteModal(task._id)}
-                        title="Delete task"
-                      >
-                        🗑️
-                      </button>
+                      <div className="task-actions">
+                        <button
+                          className="edit-btn"
+                          onClick={() => startEditTask(task)}
+                          title="Edit task"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => openDeleteModal(task._id)}
+                          title="Delete task"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

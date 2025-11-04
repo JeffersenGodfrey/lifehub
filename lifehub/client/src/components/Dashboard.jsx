@@ -432,7 +432,7 @@ const Dashboard = () => {
           {[
             { id: 'dashboard', label: '🏠 Dashboard' },
             { id: 'tasks', label: '📝 Tasks' },
-            { id: 'wellness', label: '💚 Wellness' },
+            { id: 'wellness', label: '❤️ Wellness' },
             { id: 'focus', label: '🎯 Focus' }
           ].map(tab => (
             <button
