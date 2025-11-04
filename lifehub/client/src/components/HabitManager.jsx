@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { habitAPI } from '../services/api'
+import ConfirmModal from './ConfirmModal'
 import '../styles/habit-manager.css'
 
 const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
   const [isAddingHabit, setIsAddingHabit] = useState(false)
   const [newHabit, setNewHabit] = useState({ name: '', icon: '🏃♂️' })
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, habitId: null })
 
   const handleAddHabit = async () => {
     if (newHabit.name.trim()) {
@@ -95,7 +97,7 @@ const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
               </button>
               <button
                 className="habit-delete"
-                onClick={() => onHabitDelete(habit._id || habit.id)}
+                onClick={() => setConfirmModal({ isOpen: true, habitId: habit._id || habit.id })}
               >
                 🗑️
               </button>
@@ -110,6 +112,17 @@ const HabitManager = ({ habits, onHabitAdd, onHabitToggle, onHabitDelete }) => {
           <p>No habits yet. Add your first habit to get started!</p>
         </div>
       )}
+      
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Habit"
+        message="Are you sure you want to delete this habit? This action cannot be undone."
+        onConfirm={() => {
+          onHabitDelete(confirmModal.habitId)
+          setConfirmModal({ isOpen: false, habitId: null })
+        }}
+        onCancel={() => setConfirmModal({ isOpen: false, habitId: null })}
+      />
     </div>
   )
 }

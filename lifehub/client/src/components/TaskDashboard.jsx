@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { taskAPI } from '../services/api'
+import ConfirmModal from './ConfirmModal'
 import '../styles/task-dashboard.css'
 
 const TaskDashboard = () => {
@@ -9,6 +10,7 @@ const TaskDashboard = () => {
   const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', category: 'Personal', dueDate: '' })
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, taskId: null })
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -89,16 +91,21 @@ const TaskDashboard = () => {
   }
 
   const handleTaskDelete = async (taskId) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) {
-      return
-    }
-    
     try {
       await taskAPI.deleteTask(taskId)
       setTasks(tasks.filter(t => t._id !== taskId))
+      setConfirmModal({ isOpen: false, taskId: null })
     } catch (error) {
       console.error('Failed to delete task:', error)
     }
+  }
+
+  const openDeleteModal = (taskId) => {
+    setConfirmModal({ isOpen: true, taskId })
+  }
+
+  const closeDeleteModal = () => {
+    setConfirmModal({ isOpen: false, taskId: null })
   }
 
   const filteredTasks = tasks.filter(task => {
@@ -308,7 +315,7 @@ const TaskDashboard = () => {
                       </div>
                       <button
                         className="delete-btn"
-                        onClick={() => handleTaskDelete(task._id)}
+                        onClick={() => openDeleteModal(task._id)}
                         title="Delete task"
                       >
                         🗑️
@@ -321,6 +328,14 @@ const TaskDashboard = () => {
           )}
         </div>
       </div>
+      
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        onConfirm={() => handleTaskDelete(confirmModal.taskId)}
+        onCancel={closeDeleteModal}
+      />
     </div>
   )
 }

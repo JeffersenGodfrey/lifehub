@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import ConfirmModal from './ConfirmModal'
 import '../styles/timeline-manager.css'
 
 const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimelineDelete }) => {
@@ -6,6 +7,7 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
   const [newItem, setNewItem] = useState({ time: '', activity: '', icon: '📝' })
   const [editingId, setEditingId] = useState(null)
   const [editItem, setEditItem] = useState({ time: '', activity: '', icon: '📝' })
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, itemId: null })
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -183,11 +185,7 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
                       </button>
                       <button
                         className="delete-timeline-btn"
-                        onClick={() => {
-                          if (window.confirm('Are you sure you want to delete this timeline item?')) {
-                            onTimelineDelete(item._id || item.id)
-                          }
-                        }}
+                        onClick={() => setConfirmModal({ isOpen: true, itemId: item._id || item.id })}
                         title="Delete timeline item"
                       >
                         🗑️
@@ -200,6 +198,17 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
           })
         )}
       </div>
+      
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title="Delete Timeline Item"
+        message="Are you sure you want to delete this timeline item? This action cannot be undone."
+        onConfirm={() => {
+          onTimelineDelete(confirmModal.itemId)
+          setConfirmModal({ isOpen: false, itemId: null })
+        }}
+        onCancel={() => setConfirmModal({ isOpen: false, itemId: null })}
+      />
     </div>
   )
 }
