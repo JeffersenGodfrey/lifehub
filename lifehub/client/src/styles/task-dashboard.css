@@ -276,10 +276,9 @@
 .task-card {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 8px;
   transition: all 0.3s ease;
-  min-height: 90px;
   display: flex;
   flex-direction: column;
   width: auto;
@@ -299,7 +298,7 @@
 .task-main {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
   flex: 1;
 }
 
@@ -333,16 +332,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 60px;
+  gap: 4px;
 }
 
 .task-header-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
-  gap: 12px;
+  margin-bottom: 4px;
+  gap: 8px;
 }
 
 .task-title {
@@ -389,6 +387,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 4px;
 }
 
 .task-date {
