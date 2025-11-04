@@ -105,15 +105,15 @@
   background: #ff7043;
 }
 
-.habit-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.habit-manager .habit-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
   gap: 12px;
 }
 
 @media (max-width: 768px) {
-  .habit-list {
-    grid-template-columns: 1fr;
+  .habit-manager .habit-list {
+    grid-template-columns: 1fr !important;
   }
 }
 

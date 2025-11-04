@@ -258,9 +258,9 @@
   transform: translateY(-1px);
 }
 
-.tasks-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.task-dashboard .tasks-list {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
   gap: 16px;
   flex: 1;
   overflow-y: auto;
@@ -501,8 +501,8 @@
     align-self: flex-start;
   }
   
-  .tasks-list {
-    grid-template-columns: 1fr;
+  .task-dashboard .tasks-list {
+    grid-template-columns: 1fr !important;
     gap: 12px;
   }
   

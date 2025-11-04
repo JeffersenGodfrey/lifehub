@@ -329,11 +329,7 @@ body {
   box-shadow: 0 0 0 3px rgba(75, 157, 234, 0.1);
 }
 
-.tasks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* Removed - conflicts with grid layout */
 
 .task-item {
   display: flex;
@@ -457,11 +453,7 @@ body {
   color: var(--text-primary);
 }
 
-.habit-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* Removed - conflicts with grid layout */
 
 .habit-item {
   display: flex;
