@@ -276,12 +276,14 @@
 .task-card {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 12px;
+  padding: 14px;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   width: auto;
+  height: fit-content;
+  max-height: 120px;
 }
 
 .task-card:hover {
@@ -298,7 +300,7 @@
 .task-main {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 12px;
   flex: 1;
 }
 
@@ -332,7 +334,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  gap: 2px;
 }
 
 .task-header-row {
@@ -340,7 +343,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 4px;
-  gap: 8px;
+  gap: 12px;
 }
 
 .task-title {
@@ -387,7 +390,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .task-date {
