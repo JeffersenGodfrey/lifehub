@@ -89,6 +89,10 @@ const TaskDashboard = () => {
   }
 
   const handleTaskDelete = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) {
+      return
+    }
+    
     try {
       await taskAPI.deleteTask(taskId)
       setTasks(tasks.filter(t => t._id !== taskId))

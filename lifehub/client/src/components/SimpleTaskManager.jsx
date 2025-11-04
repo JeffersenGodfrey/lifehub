@@ -117,9 +117,12 @@ const SimpleTaskManager = () => {
   }
 
   const deleteTask = async (taskId) => {
+    console.log('Delete button clicked for task:', taskId)
     if (!window.confirm('Are you sure you want to delete this task?')) {
+      console.log('User cancelled deletion')
       return
     }
+    console.log('User confirmed deletion')
     
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
@@ -138,7 +141,7 @@ const SimpleTaskManager = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h2>Task Manager</h2>
       
       <div style={{ marginBottom: '20px' }}>
@@ -185,7 +188,11 @@ const SimpleTaskManager = () => {
         </div>
       </div>
 
-      <div className="task-grid">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: window.innerWidth > 768 ? 'repeat(2, 1fr)' : '1fr',
+        gap: '16px'
+      }}>
         {tasks.length === 0 ? (
           <p style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>No tasks yet. Add one above!</p>
         ) : (
