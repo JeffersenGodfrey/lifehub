@@ -259,9 +259,9 @@
 }
 
 .tasks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   flex: 1;
   overflow-y: auto;
   padding-right: 8px;
@@ -277,9 +277,12 @@
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  padding: 16px;
+  padding: 18px;
   transition: all 0.3s ease;
-  flex-shrink: 0;
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
 }
 
 .task-card:hover {
@@ -297,6 +300,7 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  flex: 1;
 }
 
 .task-checkbox {
@@ -327,6 +331,10 @@
 
 .task-content-area {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
 }
 
 .task-header-row {
@@ -405,10 +413,10 @@
 }
 
 .empty-state {
+  grid-column: 1 / -1;
   text-align: center;
   padding: 40px 20px;
   color: #64748b;
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -434,10 +442,10 @@
 }
 
 .loading-state {
+  grid-column: 1 / -1;
   text-align: center;
   padding: 40px 20px;
   color: #64748b;
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -485,5 +493,14 @@
   
   .task-meta {
     align-self: flex-start;
+  }
+  
+  .tasks-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .task-card {
+    min-height: auto;
   }
 }

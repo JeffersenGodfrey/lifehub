@@ -180,65 +180,77 @@ const SimpleTaskManager = () => {
         </div>
       </div>
 
-      <div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr',
+        gap: '16px'
+      }}>
         {tasks.length === 0 ? (
-          <p>No tasks yet. Add one above!</p>
+          <p style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>No tasks yet. Add one above!</p>
         ) : (
           tasks.map(task => (
             <div
               key={task._id}
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '10px',
+                alignItems: 'flex-start',
+                gap: '12px',
+                padding: '16px',
                 border: '1px solid #ddd',
-                borderRadius: '4px',
-                marginBottom: '10px',
-                background: task.completed ? '#f0f8f0' : 'white'
+                borderRadius: '8px',
+                background: task.completed ? '#f0f8f0' : 'white',
+                minHeight: '100px',
+                flexDirection: 'column'
               }}
             >
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleTask(task._id)}
-                style={{ cursor: 'pointer' }}
-              />
-              <div style={{ flex: 1 }}>
-                <span
-                  style={{
-                    textDecoration: task.completed ? 'line-through' : 'none',
-                    color: task.completed ? '#666' : 'black',
-                    display: 'block'
-                  }}
-                >
-                  {task.title}
-                </span>
-                {task.dueDate && (
-                  <small
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTask(task._id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <div style={{ flex: 1 }}>
+                  <span
                     style={{
-                      color: new Date(task.dueDate) < new Date() && !task.completed ? '#ff4757' : '#666',
-                      fontWeight: new Date(task.dueDate) < new Date() && !task.completed ? 'bold' : 'normal'
+                      textDecoration: task.completed ? 'line-through' : 'none',
+                      color: task.completed ? '#666' : 'black',
+                      display: 'block',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      marginBottom: '4px'
                     }}
                   >
-                    📅 Due: {new Date(task.dueDate).toLocaleString()}
-                    {new Date(task.dueDate) < new Date() && !task.completed && ' (OVERDUE)'}
-                  </small>
-                )}
+                    {task.title}
+                  </span>
+                  {task.dueDate && (
+                    <small
+                      style={{
+                        color: new Date(task.dueDate) < new Date() && !task.completed ? '#ff4757' : '#666',
+                        fontWeight: new Date(task.dueDate) < new Date() && !task.completed ? 'bold' : 'normal',
+                        display: 'block'
+                      }}
+                    >
+                      📅 Due: {new Date(task.dueDate).toLocaleString()}
+                      {new Date(task.dueDate) < new Date() && !task.completed && ' (OVERDUE)'}
+                    </small>
+                  )}
+                </div>
+                <button
+                  onClick={() => deleteTask(task._id)}
+                  style={{
+                    background: '#ff4757',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}
+                >
+                  Delete
+                </button>
               </div>
-              <button
-                onClick={() => deleteTask(task._id)}
-                style={{
-                  background: '#ff4757',
-                  color: 'white',
-                  border: 'none',
-                  padding: '5px 10px',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Delete
-              </button>
             </div>
           ))
         )}
