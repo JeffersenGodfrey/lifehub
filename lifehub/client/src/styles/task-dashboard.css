@@ -467,6 +467,12 @@
   100% { transform: rotate(360deg); }
 }
 
+.task-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 @media (max-width: 768px) {
   .task-header {
     flex-direction: column;
@@ -498,6 +504,10 @@
   .tasks-list {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  
+  .task-grid {
+    grid-template-columns: 1fr;
   }
   
   .task-card {

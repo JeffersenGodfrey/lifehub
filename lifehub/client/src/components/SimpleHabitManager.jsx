@@ -111,6 +111,10 @@ const SimpleHabitManager = () => {
   }
 
   const deleteHabit = async (habitId) => {
+    if (!window.confirm('Are you sure you want to delete this habit?')) {
+      return
+    }
+    
     try {
       const response = await fetch(`${API_URL}/habits/${habitId}`, {
         method: 'DELETE',

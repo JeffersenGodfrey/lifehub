@@ -183,7 +183,11 @@ const TimelineManager = ({ timeline, onTimelineAdd, onTimelineUpdate, onTimeline
                       </button>
                       <button
                         className="delete-timeline-btn"
-                        onClick={() => onTimelineDelete(item._id || item.id)}
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to delete this timeline item?')) {
+                            onTimelineDelete(item._id || item.id)
+                          }
+                        }}
                         title="Delete timeline item"
                       >
                         🗑️

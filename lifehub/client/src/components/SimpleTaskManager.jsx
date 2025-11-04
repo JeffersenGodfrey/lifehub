@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import '../styles/task-dashboard.css'
 
 const SimpleTaskManager = () => {
   const [tasks, setTasks] = useState([])
@@ -116,6 +117,10 @@ const SimpleTaskManager = () => {
   }
 
   const deleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) {
+      return
+    }
+    
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: 'DELETE',
@@ -180,11 +185,7 @@ const SimpleTaskManager = () => {
         </div>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr',
-        gap: '16px'
-      }}>
+      <div className="task-grid">
         {tasks.length === 0 ? (
           <p style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>No tasks yet. Add one above!</p>
         ) : (
