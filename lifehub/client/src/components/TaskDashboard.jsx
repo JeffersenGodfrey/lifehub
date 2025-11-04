@@ -52,7 +52,7 @@ const TaskDashboard = () => {
           priority: newTask.priority,
           category: newTask.category,
           completed: false,
-          dueDate: newTask.dueDate ? new Date(newTask.dueDate).toISOString() : null
+          dueDate: newTask.dueDate || null
         }
         const createdTask = await taskAPI.createTask(taskData)
         setTasks([...tasks, createdTask])
@@ -72,7 +72,7 @@ const TaskDashboard = () => {
           title: editingTask.title,
           priority: editingTask.priority,
           category: editingTask.category,
-          dueDate: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString() : null
+          dueDate: editingTask.dueDate || null
         }
         const updatedTask = await taskAPI.updateTask(editingTask._id, taskData)
         setTasks(tasks.map(t => t._id === editingTask._id ? updatedTask : t))
@@ -85,9 +85,19 @@ const TaskDashboard = () => {
   }
 
   const startEditTask = (task) => {
+    let formattedDate = ''
+    if (task.dueDate) {
+      const date = new Date(task.dueDate)
+      // Format for datetime-local input (YYYY-MM-DDTHH:MM)
+      formattedDate = date.getFullYear() + '-' + 
+        String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+        String(date.getDate()).padStart(2, '0') + 'T' + 
+        String(date.getHours()).padStart(2, '0') + ':' + 
+        String(date.getMinutes()).padStart(2, '0')
+    }
     setEditingTask({
       ...task,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : ''
+      dueDate: formattedDate
     })
   }
 
@@ -388,7 +398,14 @@ const TaskDashboard = () => {
                               fontWeight: new Date(task.dueDate) < new Date() && !task.completed ? 'bold' : 'normal'
                             }}
                           >
-                            📅 Due: {new Date(task.dueDate).toLocaleString()}
+                            📅 Due: {new Date(task.dueDate).toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short', 
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true
+                            })}
                             {new Date(task.dueDate) < new Date() && !task.completed && ' (OVERDUE)'}
                           </span>
                         )}
