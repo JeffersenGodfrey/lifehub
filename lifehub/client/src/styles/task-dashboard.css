@@ -260,7 +260,7 @@
 
 .task-dashboard .tasks-list {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  grid-template-columns: 1fr 1fr !important;
   gap: 16px;
   flex: 1;
   overflow-y: auto;
@@ -282,8 +282,7 @@
   min-height: 120px;
   display: flex;
   flex-direction: column;
-  max-width: 100%;
-  box-sizing: border-box;
+  width: auto;
 }
 
 .task-card:hover {

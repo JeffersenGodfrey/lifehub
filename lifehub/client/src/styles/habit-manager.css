@@ -107,7 +107,7 @@
 
 .habit-manager .habit-list {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  grid-template-columns: 1fr 1fr !important;
   gap: 12px;
 }
 
@@ -122,8 +122,6 @@
   border-radius: 8px;
   padding: 10px;
   transition: all 0.3s ease;
-  max-width: 100%;
-  box-sizing: border-box;
 }
 
 .habit-item:hover {
