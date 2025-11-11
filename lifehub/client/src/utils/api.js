@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://lifehub-backend-1.onrender.com/api';
+const API_BASE_URL = 'https://lifehub-wjir.onrender.com/api';
 
 // Sync user profile after Firebase login
 export const syncUserProfile = async (user) => {
@@ -7,11 +7,11 @@ export const syncUserProfile = async (user) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.uid}` // Use Firebase UID as token
+        'Authorization': `Bearer ${user.uid}`
       },
       body: JSON.stringify({
         email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0]
+        displayName: user.displayName || user.email?.split('@')[0] || 'User'
       })
     });
 
@@ -19,7 +19,8 @@ export const syncUserProfile = async (user) => {
       console.log('✅ User profile synced to database');
       return await response.json();
     } else {
-      console.error('❌ Failed to sync user profile:', response.status);
+      const errorText = await response.text();
+      console.error('❌ Failed to sync user profile:', response.status, errorText);
     }
   } catch (error) {
     console.error('❌ Error syncing user profile:', error);

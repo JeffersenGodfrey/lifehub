@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import habitRoutes from "./routes/habitRoutes.js";
 import timelineRoutes from "./routes/timelineRoutes.js";
 import focusRoutes from "./routes/focusRoutes.js";
+import testRoutes from "./routes/testRoutes.js";
 import { startOverdueTaskChecker, startTaskReminderChecker } from "./services/cronService.js";
 
 dotenv.config();
@@ -48,6 +49,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/habits", habitRoutes);
 app.use("/api/timeline", timelineRoutes);
 app.use("/api/focus", focusRoutes);
+app.use("/api/test", testRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -11,7 +11,8 @@ export const createOrUpdateUser = async (req, res) => {
       { 
         email, 
         displayName: displayName || email.split('@')[0],
-        lastLogin: new Date()
+        lastLogin: new Date(),
+        notificationsEnabled: true
       },
       { new: true, upsert: true }
     );
