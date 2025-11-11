@@ -10,6 +10,14 @@ export const startOverdueTaskChecker = () => {
     
     try {
       const now = new Date();
+      console.log('⏰ Current time:', now.toISOString());
+      
+      // First, check all tasks
+      const allTasks = await Task.find({});
+      console.log(`📋 Total tasks in database: ${allTasks.length}`);
+      
+      const incompleteTasks = await Task.find({ completed: false });
+      console.log(`📝 Incomplete tasks: ${incompleteTasks.length}`);
       
       // Find overdue tasks (not completed, past due date)
       const overdueTasks = await Task.find({
@@ -20,6 +28,13 @@ export const startOverdueTaskChecker = () => {
           { lastNotified: { $lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) } }
         ]
       });
+      
+      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
+      if (overdueTasks.length > 0) {
+        overdueTasks.forEach(task => {
+          console.log(`  - ${task.title} (Due: ${task.dueDate}, User: ${task.userId})`);
+        });
+      }
 
       if (overdueTasks.length > 0) {
         console.log(`📧 Found ${overdueTasks.length} overdue tasks to notify`);
