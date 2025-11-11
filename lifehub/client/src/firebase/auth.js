@@ -9,6 +9,7 @@ import {
   updateProfile
 } from 'firebase/auth'
 import { auth } from './config'
+import { syncUserProfile } from '../utils/api'
 
 // Email/Password Authentication
 export const loginWithEmail = async (email, password) => {
@@ -16,6 +17,8 @@ export const loginWithEmail = async (email, password) => {
     const result = await signInWithEmailAndPassword(auth, email, password)
     // Store Firebase UID for API calls
     localStorage.setItem('firebase-uid', result.user.uid)
+    // Sync user profile to database
+    await syncUserProfile(result.user)
     return { user: result.user, error: null }
   } catch (error) {
     return { user: null, error: error.message }
@@ -30,6 +33,8 @@ export const signupWithEmail = async (email, password, displayName) => {
     }
     // Store Firebase UID for API calls
     localStorage.setItem('firebase-uid', result.user.uid)
+    // Sync user profile to database
+    await syncUserProfile(result.user)
     return { user: result.user, error: null }
   } catch (error) {
     // If email already exists, try to sign in instead
@@ -38,6 +43,8 @@ export const signupWithEmail = async (email, password, displayName) => {
         const loginResult = await signInWithEmailAndPassword(auth, email, password)
         // Store Firebase UID for API calls
         localStorage.setItem('firebase-uid', loginResult.user.uid)
+        // Sync user profile to database
+        await syncUserProfile(loginResult.user)
         return { 
           user: loginResult.user, 
           error: null,
@@ -66,6 +73,8 @@ export const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider)
     // Store Firebase UID for API calls
     localStorage.setItem('firebase-uid', result.user.uid)
+    // Sync user profile to database
+    await syncUserProfile(result.user)
     return { user: result.user, error: null }
   } catch (error) {
     console.error('Google login error:', error)

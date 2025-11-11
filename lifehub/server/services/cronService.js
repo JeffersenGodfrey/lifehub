@@ -38,11 +38,14 @@ export const startOverdueTaskChecker = () => {
           try {
             // Fetch real user email from database
             const user = await User.findOne({ firebaseUid: userId });
-            if (!user || !user.email || !user.notificationsEnabled) {
+            console.log(`🔍 User lookup for ${userId}:`, user ? { email: user.email, notificationsEnabled: user.notificationsEnabled } : 'User not found');
+            
+            if (!user || !user.email || user.notificationsEnabled === false) {
               console.log(`⏭️ Skipping user ${userId} - no email or notifications disabled`);
               continue;
             }
             
+            console.log(`📧 Attempting to send email to: ${user.email}`);
             await sendOverdueTaskEmail(user.email, userTasks);
             
             // Update lastNotified timestamp
