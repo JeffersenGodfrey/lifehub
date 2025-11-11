@@ -6,42 +6,24 @@ import { sendOverdueTaskEmail } from '../services/emailService.js';
 const router = express.Router();
 
 // Test overdue task detection
-router.get('/overdue-check', async (req, res) => {
+router.get('/check', async (req, res) => {
   try {
     const now = new Date();
-    
-    // Get all tasks
     const allTasks = await Task.find({});
-    const incompleteTasks = await Task.find({ completed: false });
-    
-    // Find overdue tasks
+    const allUsers = await User.find({});
     const overdueTasks = await Task.find({
       completed: false,
       dueDate: { $lt: now }
     });
     
-    // Get all users
-    const allUsers = await User.find({});
-    
-    const result = {
+    res.json({
       currentTime: now.toISOString(),
       totalTasks: allTasks.length,
-      incompleteTasks: incompleteTasks.length,
-      overdueTasks: overdueTasks.length,
       totalUsers: allUsers.length,
-      tasks: overdueTasks.map(task => ({
-        title: task.title,
-        dueDate: task.dueDate,
-        userId: task.userId
-      })),
-      users: allUsers.map(user => ({
-        firebaseUid: user.firebaseUid,
-        email: user.email,
-        displayName: user.displayName
-      }))
-    };
-    
-    res.json(result);
+      overdueTasks: overdueTasks.length,
+      users: allUsers.map(u => ({ uid: u.firebaseUid, email: u.email, notifications: u.notificationsEnabled })),
+      tasks: overdueTasks.map(t => ({ title: t.title, due: t.dueDate, user: t.userId }))
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
