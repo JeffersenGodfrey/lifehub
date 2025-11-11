@@ -5,8 +5,19 @@ import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
 // Check for overdue tasks every hour
 export const startOverdueTaskChecker = () => {
+  // Run once immediately for testing
+  console.log('🚀 Running immediate overdue task check...');
+  checkOverdueTasks();
+  
   cron.schedule('*/5 * * * *', async () => { // Every 5 minutes for testing
-    console.log('🔍 Checking for overdue tasks...');
+    await checkOverdueTasks();
+  });
+  
+  console.log('⏰ Overdue task checker started (runs every 5 minutes)');
+};
+
+const checkOverdueTasks = async () => {
+  console.log('🔍 Checking for overdue tasks...');
     
     try {
       const now = new Date();
@@ -75,12 +86,9 @@ export const startOverdueTaskChecker = () => {
           }
         }
       }
-    } catch (error) {
-      console.error('❌ Error in overdue task checker:', error);
-    }
-  });
-  
-  console.log('⏰ Overdue task checker started (runs every hour)');
+  } catch (error) {
+    console.error('❌ Error in overdue task checker:', error);
+  }
 };
 
 // Check for tasks due in 24 hours (reminder)
