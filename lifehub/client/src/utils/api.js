@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://lifehub-wjir.onrender.com/api';
+const API_BASE_URL = 'https://lifehub-wjir.onrender.com/api'; // Updated URL
 
 // Sync user profile after Firebase login
 export const syncUserProfile = async (user) => {
