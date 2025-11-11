@@ -52,7 +52,7 @@ const TaskDashboard = () => {
           priority: newTask.priority,
           category: newTask.category,
           completed: false,
-          dueDate: newTask.dueDate || null
+          dueDate: newTask.dueDate ? new Date(newTask.dueDate).toISOString() : null
         }
         const createdTask = await taskAPI.createTask(taskData)
         setTasks([...tasks, createdTask])
@@ -72,7 +72,7 @@ const TaskDashboard = () => {
           title: editingTask.title,
           priority: editingTask.priority,
           category: editingTask.category,
-          dueDate: editingTask.dueDate || null
+          dueDate: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString() : null
         }
         const updatedTask = await taskAPI.updateTask(editingTask._id, taskData)
         setTasks(tasks.map(t => t._id === editingTask._id ? updatedTask : t))
@@ -87,13 +87,11 @@ const TaskDashboard = () => {
   const startEditTask = (task) => {
     let formattedDate = ''
     if (task.dueDate) {
+      // Convert UTC date back to local timezone for datetime-local input
       const date = new Date(task.dueDate)
-      // Format for datetime-local input (YYYY-MM-DDTHH:MM)
-      formattedDate = date.getFullYear() + '-' + 
-        String(date.getMonth() + 1).padStart(2, '0') + '-' + 
-        String(date.getDate()).padStart(2, '0') + 'T' + 
-        String(date.getHours()).padStart(2, '0') + ':' + 
-        String(date.getMinutes()).padStart(2, '0')
+      const offset = date.getTimezoneOffset() * 60000 // offset in milliseconds
+      const localDate = new Date(date.getTime() - offset)
+      formattedDate = localDate.toISOString().slice(0, 16)
     }
     setEditingTask({
       ...task,
