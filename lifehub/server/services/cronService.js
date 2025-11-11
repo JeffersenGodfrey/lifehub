@@ -1,10 +1,11 @@
 import cron from 'node-cron';
 import Task from '../models/Task.js';
+import User from '../models/User.js';
 import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
 // Check for overdue tasks every hour
 export const startOverdueTaskChecker = () => {
-  cron.schedule('0 * * * *', async () => {
+  cron.schedule('*/5 * * * *', async () => { // Every 5 minutes for testing
     console.log('🔍 Checking for overdue tasks...');
     
     try {
@@ -35,10 +36,14 @@ export const startOverdueTaskChecker = () => {
         // Send emails to each user
         for (const [userId, userTasks] of Object.entries(tasksByUser)) {
           try {
-            // For now, we'll use a placeholder email. In production, you'd fetch user email from user profile
-            const userEmail = `${userId}@example.com`; // Replace with actual user email lookup
+            // Fetch real user email from database
+            const user = await User.findOne({ firebaseUid: userId });
+            if (!user || !user.email || !user.notificationsEnabled) {
+              console.log(`⏭️ Skipping user ${userId} - no email or notifications disabled`);
+              continue;
+            }
             
-            await sendOverdueTaskEmail(userEmail, userTasks);
+            await sendOverdueTaskEmail(user.email, userTasks);
             
             // Update lastNotified timestamp
             await Task.updateMany(
@@ -46,7 +51,7 @@ export const startOverdueTaskChecker = () => {
               { lastNotified: now }
             );
             
-            console.log(`✅ Sent overdue notification to ${userEmail}`);
+            console.log(`✅ Sent overdue notification to ${user.email}`);
           } catch (error) {
             console.error(`❌ Failed to send notification to user ${userId}:`, error);
           }
@@ -84,10 +89,16 @@ export const startTaskReminderChecker = () => {
         
         for (const task of upcomingTasks) {
           try {
-            const userEmail = `${task.userId}@example.com`; // Replace with actual user email lookup
+            // Fetch real user email from database
+            const user = await User.findOne({ firebaseUid: task.userId });
+            if (!user || !user.email || !user.notificationsEnabled) {
+              console.log(`⏭️ Skipping reminder for user ${task.userId} - no email or notifications disabled`);
+              continue;
+            }
+            
             const hoursUntilDue = Math.round((new Date(task.dueDate) - now) / (1000 * 60 * 60));
             
-            await sendTaskReminderEmail(userEmail, task, hoursUntilDue);
+            await sendTaskReminderEmail(user.email, task, hoursUntilDue);
             
             // Mark reminder as sent
             await Task.findByIdAndUpdate(task._id, { reminderSent: true });
