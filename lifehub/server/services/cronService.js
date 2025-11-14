@@ -25,6 +25,14 @@ export const startOverdueTaskChecker = () => {
       });
       
       console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
+      
+      // Debug: Show all incomplete tasks with their due dates
+      const allIncompleteTasks = await Task.find({ completed: false });
+      console.log('📋 All incomplete tasks:');
+      allIncompleteTasks.forEach(task => {
+        const isOverdue = task.dueDate && new Date(task.dueDate) < now;
+        console.log(`  - "${task.title}" due: ${task.dueDate} (${isOverdue ? 'OVERDUE' : 'not overdue'}) lastNotified: ${task.lastNotified || 'never'}`);
+      });
 
       if (overdueTasks.length > 0) {
         console.log('📧 Processing overdue tasks for email notifications...');
