@@ -6,8 +6,14 @@ import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 // Check for overdue tasks every hour
 export const startOverdueTaskChecker = () => {
   cron.schedule('*/5 * * * *', async () => { // Every 5 minutes for testing
+    console.log('🔍 Checking for overdue tasks...');
     try {
       const now = new Date();
+      
+      // Debug: Check total counts
+      const totalTasks = await Task.countDocuments();
+      const totalUsers = await User.countDocuments();
+      console.log(`📊 Database: ${totalTasks} tasks, ${totalUsers} users`);
       
       const overdueTasks = await Task.find({
         completed: false,
@@ -17,8 +23,11 @@ export const startOverdueTaskChecker = () => {
           { lastNotified: { $lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) } }
         ]
       });
+      
+      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
 
       if (overdueTasks.length > 0) {
+        console.log('📧 Processing overdue tasks for email notifications...');
         const tasksByUser = {};
         overdueTasks.forEach(task => {
           if (!tasksByUser[task.userId]) {
