@@ -3,18 +3,30 @@ import Task from '../models/Task.js';
 import User from '../models/User.js';
 import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
-// Check for overdue tasks every hour
+// Check for overdue tasks every 5 minutes
 export const startOverdueTaskChecker = () => {
-  cron.schedule('*/5 * * * *', async () => { // Every 5 minutes for testing
+  cron.schedule('*/5 * * * *', async () => {
     try {
       const now = new Date();
       console.log('🔍 Checking for overdue tasks at', now.toISOString());
       
-      // Debug: Check total counts
       const totalTasks = await Task.countDocuments();
       const totalUsers = await User.countDocuments();
       console.log(`📊 Database: ${totalTasks} tasks, ${totalUsers} users`);
       
+      // Get all incomplete tasks first
+      const allIncompleteTasks = await Task.find({ completed: false });
+      console.log(`📋 Found ${allIncompleteTasks.length} incomplete tasks`);
+      
+      // Show each task details
+      for (let i = 0; i < allIncompleteTasks.length; i++) {
+        const task = allIncompleteTasks[i];
+        const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+        const isOverdue = dueDate && dueDate < now;
+        console.log(`${i + 1}. "${task.title}" - Due: ${task.dueDate} - Overdue: ${isOverdue} - LastNotified: ${task.lastNotified || 'never'}`);
+      }
+      
+      // Find overdue tasks with the query
       const overdueTasks = await Task.find({
         completed: false,
         dueDate: { $lt: now },
@@ -24,18 +36,11 @@ export const startOverdueTaskChecker = () => {
         ]
       });
       
-      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
-      
-      // Debug: Show all incomplete tasks with their due dates
-      const allIncompleteTasks = await Task.find({ completed: false });
-      console.log('📋 All incomplete tasks:');
-      allIncompleteTasks.forEach(task => {
-        const isOverdue = task.dueDate && new Date(task.dueDate) < now;
-        console.log(`  - "${task.title}" due: ${task.dueDate} (${isOverdue ? 'OVERDUE' : 'not overdue'}) lastNotified: ${task.lastNotified || 'never'}`);
-      });
+      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks matching query`);
 
       if (overdueTasks.length > 0) {
         console.log('📧 Processing overdue tasks for email notifications...');
+        
         const tasksByUser = {};
         overdueTasks.forEach(task => {
           if (!tasksByUser[task.userId]) {
@@ -47,28 +52,33 @@ export const startOverdueTaskChecker = () => {
         for (const [userId, userTasks] of Object.entries(tasksByUser)) {
           try {
             const user = await User.findOne({ firebaseUid: userId });
+            console.log(`👤 User lookup for ${userId}:`, user ? `${user.email} (notifications: ${user.notificationsEnabled})` : 'not found');
             
             if (!user || !user.email || user.notificationsEnabled === false) {
+              console.log(`⏭️ Skipping user ${userId}`);
               continue;
             }
             
+            console.log(`📧 Sending email to ${user.email} for ${userTasks.length} tasks`);
             await sendOverdueTaskEmail(user.email, userTasks);
             
             await Task.updateMany(
               { _id: { $in: userTasks.map(t => t._id) } },
               { lastNotified: now }
             );
+            
+            console.log(`✅ Email sent and tasks updated`);
           } catch (error) {
-            console.error(`Failed to send notification to user ${userId}:`, error);
+            console.error(`❌ Failed to send notification to user ${userId}:`, error.message);
           }
         }
       }
     } catch (error) {
-      console.error('Error in overdue task checker:', error);
+      console.error('❌ Error in overdue task checker:', error.message);
     }
   });
   
-  console.log('⏰ Overdue task checker started (runs every hour)');
+  console.log('⏰ Overdue task checker started (runs every 5 minutes)');
 };
 
 // Check for tasks due in 24 hours (reminder)
@@ -98,15 +108,14 @@ export const startTaskReminderChecker = () => {
             const hoursUntilDue = Math.round((new Date(task.dueDate) - now) / (1000 * 60 * 60));
             
             await sendTaskReminderEmail(user.email, task, hoursUntilDue);
-            
             await Task.findByIdAndUpdate(task._id, { reminderSent: true });
           } catch (error) {
-            console.error(`Failed to send reminder for task ${task._id}:`, error);
+            console.error(`Failed to send reminder for task ${task._id}:`, error.message);
           }
         }
       }
     } catch (error) {
-      console.error('Error in task reminder checker:', error);
+      console.error('Error in task reminder checker:', error.message);
     }
   });
   
