@@ -78,7 +78,7 @@ export const startOverdueTaskChecker = () => {
     }
   });
   
-  console.log('⏰ Overdue task checker started (runs every 5 minutes)');
+  console.log('⏰ Overdue task checker started (runs every 5 minutes) - v2.0');
 };
 
 // Check for tasks due in 24 hours (reminder)
