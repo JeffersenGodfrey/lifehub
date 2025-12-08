@@ -26,13 +26,13 @@ export const startOverdueTaskChecker = () => {
         console.log(`${i + 1}. "${task.title}" - Due: ${task.dueDate} - Overdue: ${isOverdue} - LastNotified: ${task.lastNotified || 'never'}`);
       }
       
-      // Find overdue tasks with the query
+      // Find overdue tasks with the query (5 minute cooldown for testing)
       const overdueTasks = await Task.find({
         completed: false,
         dueDate: { $lt: now },
         $or: [
           { lastNotified: { $exists: false } },
-          { lastNotified: { $lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) } }
+          { lastNotified: { $lt: new Date(now.getTime() - 5 * 60 * 1000) } } // 5 minutes for testing
         ]
       });
       

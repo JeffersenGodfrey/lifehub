@@ -3,17 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Create transporter - try Gmail first, fallback to direct SMTP
+// Create transporter using Gmail with SSL
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // use TLS
+  port: 465,
+  secure: true, // use SSL
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false
   },
   connectionTimeout: 10000,
   greetingTimeout: 10000,
