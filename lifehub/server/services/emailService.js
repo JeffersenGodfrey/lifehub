@@ -3,16 +3,21 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Create transporter using Gmail (free tier)
+// Create transporter - try Gmail first, fallback to direct SMTP
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // use TLS
   auth: {
-    user: process.env.EMAIL_USER, // Your Gmail address
-    pass: process.env.EMAIL_PASS  // Your Gmail App Password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   },
-  connectionTimeout: 60000, // 60 seconds
-  greetingTimeout: 30000,    // 30 seconds
-  socketTimeout: 60000       // 60 seconds
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
