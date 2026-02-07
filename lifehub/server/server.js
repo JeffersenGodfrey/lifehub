@@ -60,7 +60,6 @@ mongoose
   })
   .then(() => {
     console.log("✅ MongoDB Connected");
-    // Start cron services after DB connection
     startOverdueTaskChecker();
     startTaskReminderChecker();
   })
@@ -70,10 +69,10 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.send("LifeHub API is running! Updated CORS");
+  res.send("LifeHub API is running!");
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT} - Updated`);
-  console.log('📧 Email notifications ready (configure EMAIL_USER and EMAIL_PASS)');
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log('📧 Email notifications configured');
 });

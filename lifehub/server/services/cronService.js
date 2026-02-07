@@ -3,44 +3,24 @@ import Task from '../models/Task.js';
 import User from '../models/User.js';
 import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
-// Check for overdue tasks every 5 minutes
 export const startOverdueTaskChecker = () => {
   cron.schedule('*/5 * * * *', async () => {
     try {
       const now = new Date();
-      console.log('🔍 Checking for overdue tasks at', now.toISOString());
+      console.log('🔍 Checking overdue tasks at', now.toISOString());
       
-      const totalTasks = await Task.countDocuments();
-      const totalUsers = await User.countDocuments();
-      console.log(`📊 Database: ${totalTasks} tasks, ${totalUsers} users`);
-      
-      // Get all incomplete tasks first
-      const allIncompleteTasks = await Task.find({ completed: false });
-      console.log(`📋 Found ${allIncompleteTasks.length} incomplete tasks`);
-      
-      // Show each task details
-      for (let i = 0; i < allIncompleteTasks.length; i++) {
-        const task = allIncompleteTasks[i];
-        const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-        const isOverdue = dueDate && dueDate < now;
-        console.log(`${i + 1}. "${task.title}" - Due: ${task.dueDate} - Overdue: ${isOverdue} - LastNotified: ${task.lastNotified || 'never'}`);
-      }
-      
-      // Find overdue tasks with the query (5 minute cooldown for testing)
       const overdueTasks = await Task.find({
         completed: false,
         dueDate: { $lt: now },
         $or: [
           { lastNotified: { $exists: false } },
-          { lastNotified: { $lt: new Date(now.getTime() - 5 * 60 * 1000) } } // 5 minutes for testing
+          { lastNotified: { $lt: new Date(now.getTime() - 5 * 60 * 1000) } }
         ]
       });
       
-      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks matching query`);
+      console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
 
       if (overdueTasks.length > 0) {
-        console.log('📧 Processing overdue tasks for email notifications...');
-        
         const tasksByUser = {};
         overdueTasks.forEach(task => {
           if (!tasksByUser[task.userId]) {
@@ -52,7 +32,6 @@ export const startOverdueTaskChecker = () => {
         for (const [userId, userTasks] of Object.entries(tasksByUser)) {
           try {
             const user = await User.findOne({ firebaseUid: userId });
-            console.log(`👤 User lookup for ${userId}:`, user ? `${user.email} (notifications: ${user.notificationsEnabled})` : 'not found');
             
             if (!user || !user.email || user.notificationsEnabled === false) {
               console.log(`⏭️ Skipping user ${userId}`);
@@ -69,19 +48,18 @@ export const startOverdueTaskChecker = () => {
             
             console.log(`✅ Email sent and tasks updated`);
           } catch (error) {
-            console.error(`❌ Failed to send notification to user ${userId}:`, error.message);
+            console.error(`❌ Failed for user ${userId}:`, error.message);
           }
         }
       }
     } catch (error) {
-      console.error('❌ Error in overdue task checker:', error.message);
+      console.error('❌ Error in overdue checker:', error.message);
     }
   });
   
-  console.log('⏰ Overdue task checker started (runs every 5 minutes) - v2.0');
+  console.log('⏰ Overdue task checker started (runs every 5 minutes)');
 };
 
-// Check for tasks due in 24 hours (reminder)
 export const startTaskReminderChecker = () => {
   cron.schedule('0 9 * * *', async () => {
     try {
@@ -110,12 +88,12 @@ export const startTaskReminderChecker = () => {
             await sendTaskReminderEmail(user.email, task, hoursUntilDue);
             await Task.findByIdAndUpdate(task._id, { reminderSent: true });
           } catch (error) {
-            console.error(`Failed to send reminder for task ${task._id}:`, error.message);
+            console.error(`❌ Failed reminder for task ${task._id}:`, error.message);
           }
         }
       }
     } catch (error) {
-      console.error('Error in task reminder checker:', error.message);
+      console.error('❌ Error in reminder checker:', error.message);
     }
   });
   

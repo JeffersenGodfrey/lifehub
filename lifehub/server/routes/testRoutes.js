@@ -29,4 +29,25 @@ router.get('/check', async (req, res) => {
   }
 });
 
+// Test email sending
+router.post('/email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email required in body' });
+    }
+    
+    const testTasks = [{
+      title: 'Test Task from LifeHub',
+      dueDate: new Date(Date.now() - 24 * 60 * 60 * 1000)
+    }];
+    
+    console.log(`🧪 Testing email to: ${email}`);
+    const result = await sendOverdueTaskEmail(email, testTasks);
+    res.json({ success: result.success, message: 'Check email and server logs', result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
