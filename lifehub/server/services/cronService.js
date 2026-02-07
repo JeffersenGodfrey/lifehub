@@ -3,8 +3,26 @@ import Task from '../models/Task.js';
 import User from '../models/User.js';
 import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
+const getNotificationSchedule = (dueDate, notificationCount) => {
+  const now = new Date();
+  const daysSinceOverdue = Math.floor((now - new Date(dueDate)) / (1000 * 60 * 60 * 24));
+  
+  // Notification schedule:
+  // 1st: When task becomes overdue (day 0)
+  // 2nd: After 1 day (day 1)
+  // 3rd: After 1 week (day 7)
+  // 4th: After 1 month (day 30)
+  
+  if (notificationCount === 0 && daysSinceOverdue >= 0) return true; // First notification
+  if (notificationCount === 1 && daysSinceOverdue >= 1) return true; // After 1 day
+  if (notificationCount === 2 && daysSinceOverdue >= 7) return true; // After 1 week
+  if (notificationCount === 3 && daysSinceOverdue >= 30) return true; // After 1 month
+  
+  return false;
+};
+
 export const startOverdueTaskChecker = () => {
-  cron.schedule('0 9,17 * * *', async () => {
+  cron.schedule('0 9 * * *', async () => {
     try {
       const now = new Date();
       console.log('🔍 Checking overdue tasks at', now.toISOString());
@@ -12,22 +30,22 @@ export const startOverdueTaskChecker = () => {
       const overdueTasks = await Task.find({
         completed: false,
         dueDate: { $lt: now },
-        $or: [
-          { lastNotified: { $exists: false } },
-          { lastNotified: { $lt: new Date(now.getTime() - 12 * 60 * 60 * 1000) } }
-        ]
+        notificationCount: { $lt: 4 }
       });
       
       console.log(`⚠️ Found ${overdueTasks.length} overdue tasks`);
 
       if (overdueTasks.length > 0) {
         const tasksByUser = {};
-        overdueTasks.forEach(task => {
-          if (!tasksByUser[task.userId]) {
-            tasksByUser[task.userId] = [];
+        
+        for (const task of overdueTasks) {
+          if (getNotificationSchedule(task.dueDate, task.notificationCount)) {
+            if (!tasksByUser[task.userId]) {
+              tasksByUser[task.userId] = [];
+            }
+            tasksByUser[task.userId].push(task);
           }
-          tasksByUser[task.userId].push(task);
-        });
+        }
 
         for (const [userId, userTasks] of Object.entries(tasksByUser)) {
           try {
@@ -41,10 +59,12 @@ export const startOverdueTaskChecker = () => {
             console.log(`📧 Sending email to ${user.email} for ${userTasks.length} tasks`);
             await sendOverdueTaskEmail(user.email, userTasks);
             
-            await Task.updateMany(
-              { _id: { $in: userTasks.map(t => t._id) } },
-              { lastNotified: now }
-            );
+            for (const task of userTasks) {
+              await Task.findByIdAndUpdate(task._id, {
+                lastNotified: now,
+                notificationCount: task.notificationCount + 1
+              });
+            }
             
             console.log(`✅ Email sent and tasks updated`);
           } catch (error) {
@@ -57,7 +77,7 @@ export const startOverdueTaskChecker = () => {
     }
   });
   
-  console.log('⏰ Overdue task checker started (runs at 9 AM and 5 PM daily)');
+  console.log('⏰ Overdue task checker started (runs daily at 9 AM)');
 };
 
 export const startTaskReminderChecker = () => {

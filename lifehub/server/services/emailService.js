@@ -21,15 +21,20 @@ transporter.verify((error, success) => {
 
 export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
   try {
+    const isReminder = overdueTasks.some(t => t.notificationCount > 0);
+    const subject = isReminder 
+      ? `🔔 LifeHub: Reminder - ${overdueTasks.length} Overdue Task${overdueTasks.length > 1 ? 's' : ''}`
+      : `⚠️ LifeHub: ${overdueTasks.length} Overdue Task${overdueTasks.length > 1 ? 's' : ''}`;
+
     const mailOptions = {
       from: `LifeHub <${process.env.EMAIL_USER}>`,
       to: userEmail,
-      subject: `⚠️ LifeHub: ${overdueTasks.length} Overdue Task${overdueTasks.length > 1 ? 's' : ''}`,
+      subject: subject,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #ff4757;">⚠️ Overdue Tasks Alert</h2>
+          <h2 style="color: #ff4757;">${isReminder ? '🔔 Task Reminder' : '⚠️ Overdue Tasks Alert'}</h2>
           <p>Hi there!</p>
-          <p>You have <strong>${overdueTasks.length}</strong> overdue task${overdueTasks.length > 1 ? 's' : ''} in your LifeHub:</p>
+          <p>${isReminder ? 'Friendly reminder about your' : 'You have'} <strong>${overdueTasks.length}</strong> overdue task${overdueTasks.length > 1 ? 's' : ''} in your LifeHub:</p>
           
           <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
             ${overdueTasks.map(task => `
