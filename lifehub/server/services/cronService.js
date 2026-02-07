@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import { sendOverdueTaskEmail, sendTaskReminderEmail } from './emailService.js';
 
 export const startOverdueTaskChecker = () => {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('0 9,17 * * *', async () => {
     try {
       const now = new Date();
       console.log('🔍 Checking overdue tasks at', now.toISOString());
@@ -14,7 +14,7 @@ export const startOverdueTaskChecker = () => {
         dueDate: { $lt: now },
         $or: [
           { lastNotified: { $exists: false } },
-          { lastNotified: { $lt: new Date(now.getTime() - 5 * 60 * 1000) } }
+          { lastNotified: { $lt: new Date(now.getTime() - 12 * 60 * 60 * 1000) } }
         ]
       });
       
@@ -57,7 +57,7 @@ export const startOverdueTaskChecker = () => {
     }
   });
   
-  console.log('⏰ Overdue task checker started (runs every 5 minutes)');
+  console.log('⏰ Overdue task checker started (runs at 9 AM and 5 PM daily)');
 };
 
 export const startTaskReminderChecker = () => {
