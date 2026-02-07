@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error, success) => {
   if (error) {
     console.error('❌ Email config failed:', error.message);
+    console.log('⚠️ Emails will still be attempted when needed');
   } else {
     console.log('✅ Email server ready');
   }
@@ -21,6 +22,11 @@ transporter.verify((error, success) => {
 
 export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
   try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('❌ Email credentials not configured');
+      return { success: false, error: 'Email not configured' };
+    }
+
     const isReminder = overdueTasks.some(t => t.notificationCount > 0);
     const subject = isReminder 
       ? `🔔 LifeHub: Reminder - ${overdueTasks.length} Overdue Task${overdueTasks.length > 1 ? 's' : ''}`
