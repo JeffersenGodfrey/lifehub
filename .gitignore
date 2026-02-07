@@ -8,10 +8,14 @@ dist/
 client/dist/
 server/dist/
 
-# Environment variables (keep local only)
-# .env
-# server/.env
-# client/.env
+# Environment variables
+.env
+.env.local
+.env.production
+server/.env
+client/.env
+lifehub/server/.env
+lifehub/client/.env
 
 # Logs
 npm-debug.log*
