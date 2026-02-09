@@ -11,14 +11,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email config failed:', error.message);
-    console.log('⚠️ Emails will still be attempted when needed');
-  } else {
-    console.log('✅ Email server ready');
-  }
-});
+console.log('📧 Email service initialized');
 
 export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
   try {

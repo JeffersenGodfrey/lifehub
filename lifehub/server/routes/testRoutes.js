@@ -1,6 +1,7 @@
 import express from 'express';
 import Task from '../models/Task.js';
 import User from '../models/User.js';
+import { sendOverdueTaskEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -22,6 +23,36 @@ router.get('/check', async (req, res) => {
       users: allUsers.map(u => ({ uid: u.firebaseUid, email: u.email, notifications: u.notificationsEnabled })),
       tasks: overdueTasks.map(t => ({ title: t.title, due: t.dueDate, user: t.userId }))
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email required' });
+    }
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return res.status(500).json({ error: 'Email service not configured. Check .env file.' });
+    }
+
+    const testTask = {
+      title: 'Test Task',
+      dueDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      notificationCount: 0
+    };
+
+    const result = await sendOverdueTaskEmail(email, [testTask]);
+    
+    if (result.success) {
+      res.json({ success: true, message: 'Test email sent successfully', messageId: result.messageId });
+    } else {
+      res.status(500).json({ success: false, error: result.error });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
