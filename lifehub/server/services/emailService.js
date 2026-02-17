@@ -3,21 +3,41 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+let transporter = null;
 
-console.log('📧 Email service initialized');
+const initializeTransporter = () => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn('⚠️ Email credentials not configured - email features disabled');
+    return null;
+  }
+
+  try {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    console.log('📧 Email service initialized successfully');
+    return transporter;
+  } catch (error) {
+    console.error('❌ Email service initialization failed:', error.message);
+    return null;
+  }
+};
+
+transporter = initializeTransporter();
 
 export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.error('❌ Email credentials not configured');
-      return { success: false, error: 'Email not configured' };
+    if (!transporter) {
+      console.error('❌ Email service not initialized');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    if (!userEmail || !overdueTasks || overdueTasks.length === 0) {
+      return { success: false, error: 'Invalid parameters' };
     }
 
     const isReminder = overdueTasks.some(t => t.notificationCount > 0);
@@ -65,6 +85,15 @@ export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
 
 export const sendTaskReminderEmail = async (userEmail, task, hoursUntilDue) => {
   try {
+    if (!transporter) {
+      console.error('❌ Email service not initialized');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    if (!userEmail || !task) {
+      return { success: false, error: 'Invalid parameters' };
+    }
+
     const mailOptions = {
       from: `LifeHub <${process.env.EMAIL_USER}>`,
       to: userEmail,
@@ -104,6 +133,15 @@ export const sendTaskReminderEmail = async (userEmail, task, hoursUntilDue) => {
 
 export const sendWellnessReminder = async (userEmail, displayName, missedGoals) => {
   try {
+    if (!transporter) {
+      console.error('❌ Email service not initialized');
+      return { success: false, error: 'Email service not configured' };
+    }
+
+    if (!userEmail || !missedGoals || missedGoals.length === 0) {
+      return { success: false, error: 'Invalid parameters' };
+    }
+
     const mailOptions = {
       from: `LifeHub <${process.env.EMAIL_USER}>`,
       to: userEmail,
