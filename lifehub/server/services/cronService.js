@@ -22,32 +22,31 @@ const getNotificationSchedule = (dueDate, notificationCount) => {
 };
 
 export const startOverdueTaskChecker = () => {
-  // Check every hour for newly overdue tasks
-  cron.schedule('0 * * * *', async () => {
+  // Check every minute for overdue tasks that haven't been notified
+  cron.schedule('* * * * *', async () => {
     try {
       const now = new Date();
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
       
-      console.log('🔍 Checking for newly overdue tasks at', now.toISOString());
-      
-      // Find tasks that became overdue in the last hour and haven't been notified
-      const newlyOverdueTasks = await Task.find({
+      // Find ALL overdue tasks that haven't been notified yet
+      const overdueTasksToNotify = await Task.find({
         completed: false,
         dueDate: { 
           $exists: true, 
           $ne: null, 
-          $gte: oneHourAgo,
           $lt: now 
         },
-        notificationCount: 0
+        $or: [
+          { notificationCount: { $exists: false } },
+          { notificationCount: 0 }
+        ]
       });
-      
-      console.log(`⚠️ Found ${newlyOverdueTasks.length} newly overdue tasks`);
 
-      if (newlyOverdueTasks.length > 0) {
+      if (overdueTasksToNotify.length > 0) {
+        console.log(`🔍 Found ${overdueTasksToNotify.length} overdue tasks to notify at`, now.toISOString());
+        
         const tasksByUser = {};
         
-        for (const task of newlyOverdueTasks) {
+        for (const task of overdueTasksToNotify) {
           if (!tasksByUser[task.userId]) {
             tasksByUser[task.userId] = [];
           }
@@ -63,7 +62,7 @@ export const startOverdueTaskChecker = () => {
               continue;
             }
             
-            console.log(`📧 Sending IMMEDIATE overdue email to ${user.email} for ${userTasks.length} tasks`);
+            console.log(`📧 Sending overdue email to ${user.email} for ${userTasks.length} task(s)`);
             const result = await sendOverdueTaskEmail(user.email, userTasks);
             
             if (result.success) {
@@ -73,7 +72,7 @@ export const startOverdueTaskChecker = () => {
                   notificationCount: 1
                 });
               }
-              console.log(`✅ Immediate email sent to ${user.email}`);
+              console.log(`✅ Email sent to ${user.email}`);
             } else {
               console.error(`❌ Email failed for ${user.email}:`, result.error);
             }
@@ -87,7 +86,7 @@ export const startOverdueTaskChecker = () => {
     }
   });
   
-  console.log('⏰ Overdue task checker started (checks every hour for newly overdue tasks)');
+  console.log('⏰ Overdue task checker started (checks every minute)');
 };
 
 export const startTaskReminderChecker = () => {
