@@ -13,13 +13,17 @@ const initializeTransporter = () => {
 
   try {
     transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
       }
     });
     console.log('📧 Email service initialized successfully');
+    console.log('EMAIL_USER:', process.env.EMAIL_USER);
+    console.log('EMAIL_PASS exists:', !!process.env.EMAIL_PASS);
     return transporter;
   } catch (error) {
     console.error('❌ Email service initialization failed:', error.message);
@@ -37,8 +41,11 @@ export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
     }
 
     if (!userEmail || !overdueTasks || overdueTasks.length === 0) {
+      console.error('❌ Invalid email parameters:', { userEmail, taskCount: overdueTasks?.length });
       return { success: false, error: 'Invalid parameters' };
     }
+
+    console.log('📧 Preparing to send email to:', userEmail);
 
     const isReminder = overdueTasks.some(t => t.notificationCount > 0);
     const subject = isReminder 
@@ -74,11 +81,16 @@ export const sendOverdueTaskEmail = async (userEmail, overdueTasks) => {
       `
     };
 
+    console.log('📧 Sending email via SMTP...');
     const result = await transporter.sendMail(mailOptions);
-    console.log('✅ Overdue email sent:', result.messageId);
-    return { success: true, messageId: result.messageId };
+    console.log('✅ Email sent successfully! MessageID:', result.messageId);
+    console.log('✅ Response:', result.response);
+    return { success: true, messageId: result.messageId, response: result.response };
   } catch (error) {
-    console.error('❌ Email failed:', error.message);
+    console.error('❌ Email sending failed!');
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error code:', error.code);
+    console.error('❌ Full error:', error);
     return { success: false, error: error.message };
   }
 };
